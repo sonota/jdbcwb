@@ -53,11 +53,19 @@ function requireAppLib(path){
 
 ////////////////////////////////
 
-(function(args){
+/**
+ * - parse command line options
+ * - load config
+ */
+function init(args){
   var opts = Optparse.parse(args, [
     ["--config", true],
     ["--debug"]
   ]);
+
+  if(opts.has("--debug")){
+    GLOBAL.isDebug = true;
+  }
 
   var configPath = "config.json";
   if(opts.has("--config")){
@@ -67,13 +75,9 @@ function requireAppLib(path){
 
   GLOBAL.config = JSON.parse(_File.read(configPath));
 
-  if(opts.has("--debug")){
-    GLOBAL.isDebug = true;
+  if(isDebug()){
+    putskv("config", JSON.stringify(GLOBAL.config));
   }
-})(arguments);
-
-if(isDebug()){
-  putskv("config", JSON.stringify(GLOBAL.config));
 }
 
 ////////////////////////////////
@@ -134,7 +138,10 @@ function handler(he){
   }
 }
 
-(function(){
+(function(args){
+
+  init(args);
+
   var PORT = GLOBAL.config["port"];
 
   var server = HttpServer.create(
@@ -149,4 +156,4 @@ function handler(he){
   server.start();
 
   java.lang.Thread.currentThread().suspend(); 
-})();
+})(arguments);
