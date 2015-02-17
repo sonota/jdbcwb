@@ -102,6 +102,12 @@ function handler(he){
 
     var path = hew.getPath();
 
+    if(path === "/favicon.ico"){
+      hew.writeString(404, "");
+      hew.close();
+      return;
+    }
+
     var req = new HttpUtils.Request();
     req.params = hew.getParams();
 
