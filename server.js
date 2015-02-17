@@ -6,7 +6,7 @@
     .replace( /\\/g, "/");
   global.LOAD_PATH = [
     __FILE__.replace( /^(.*)\/.+?$/, '$1' ),
-    stdLibDir
+    stdLibDir + "/lib"
   ];
   load(stdLibDir + "/init_jrunscript.js");
   load(stdLibDir + "/my_init.js");
@@ -28,11 +28,11 @@ importClass(java.util.Map);
 
 ////////////////////////////////
 
-require("lib/json2/json2"); //=> JSON
-var _ = require("lib/underscore/underscore");
-var HttpUtils = require("lib/http_utils");
-var HttpExchangeWrapper = require("lib/http_exchange_wrapper");
-var Optparse = require("lib/optparse");
+require("json2/json2"); //=> JSON
+var _ = require("underscore/underscore");
+var HttpUtils = require("http_utils");
+var HttpExchangeWrapper = require("http_exchange_wrapper");
+var Optparse = require("optparse");
 
 ////////////////////////////////
 
@@ -78,7 +78,7 @@ if(isDebug()){
 
 ////////////////////////////////
 
-var Kijitora = require("lib/kijitora/kijitora");
+var Kijitora = require("kijitora/kijitora");
 var app = requireAppLib("app");
 var conn;
 
