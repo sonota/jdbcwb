@@ -118,6 +118,8 @@ function handler(he){
     var res = new HttpUtils.Response();
     var method = getMethod(hew, req);
 
+    puts("" + new Date() + " " + method + " " + path);
+
     app.dispatch(method, path, req, res);
 
     if(res.filePath){
