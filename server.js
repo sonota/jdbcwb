@@ -46,6 +46,10 @@ function isDebug(){
   return GLOBAL.debug;
 }
 
+function puts_debug(){
+  if(isDebug()) puts.apply(this, arguments);
+}
+
 var APP_ROOT = _File.dirname(__FILE__);
 
 function requireAppLib(path){
