@@ -37,12 +37,12 @@ var Optparse = require("optparse");
 ////////////////////////////////
 
 GLOBAL = {
-  isDebug: false,
+  debug: false,
   config: null
 };
 
 function isDebug(){
-  return GLOBAL.isDebug;
+  return GLOBAL.debug;
 }
 
 var APP_ROOT = _File.dirname(__FILE__);
@@ -64,7 +64,7 @@ function init(args){
   ]);
 
   if(opts.has("--debug")){
-    GLOBAL.isDebug = true;
+    GLOBAL.debug = true;
   }
 
   var configPath = "config.json";
