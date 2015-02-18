@@ -38,7 +38,8 @@ var Optparse = require("optparse");
 
 GLOBAL = {
   debug: false,
-  config: null
+  config: null,
+  conn: null
 };
 
 function isDebug(){
@@ -84,7 +85,6 @@ function init(args){
 
 var Kijitora = require("kijitora/kijitora");
 var app = requireAppLib("app");
-var conn;
 
 function getMethod(hew, req){
   var method = hew.getMethod().toUpperCase();
