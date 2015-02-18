@@ -56,6 +56,24 @@ function requireAppLib(path){
   return require(APP_ROOT + "/" + path);
 }
 
+function padRight(width, pad, x){
+  var s = "" + x;
+  while(s.length < width){
+    s = pad + s;
+  }
+  return s;
+}
+
+function prettyDatetime(date){
+  return    padRight(4, "0", date.getFullYear())
+    + "-" + padRight(2, "0", date.getMonth() + 1)
+    + "-" + padRight(2, "0", date.getDate())
+    + "_" + padRight(2, "0", date.getHours())
+    + ":" + padRight(2, "0", date.getMinutes())
+    + ":" + padRight(2, "0", date.getSeconds())
+    + "." + padRight(3, "0", date.getMilliseconds());
+}
+
 ////////////////////////////////
 
 /**
@@ -122,7 +140,7 @@ function handler(he){
     var res = new HttpUtils.Response();
     var method = getMethod(hew, req);
 
-    puts("" + new Date() + " " + method + " " + path);
+    puts("" + prettyDatetime(new Date()) + " " + method + " " + path);
 
     app.dispatch(method, path, req, res);
 

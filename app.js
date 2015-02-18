@@ -107,7 +107,7 @@ function rs2recs(rs, md, limit){
 ////////////////////////////////
 
 function date2str(date){
-  return "" + date.getTime() + "_" + date;
+  return "" + date.getTime() + "_" + prettyDatetime(date);
 }
 
 function getView(name){
