@@ -132,7 +132,11 @@ function handler(he){
     }
 
   }catch(e){
-    dump(e);
+    if(typeof e === "string"){
+      puts(e);
+    }else{
+      dump(e);
+    }
     var html = HttpUtils.makeErrorPageHtml(e, isDebug());
     hew.writeString(500, html);
   }finally{
