@@ -4,10 +4,32 @@
 <head>
   <title>jdbcwb</title>
   <meta charset="utf-8" />
+
+  <script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+  <script src="/js/app_client.js"></script>
 </head>
 
 <body>
-main
+
+<div id="_generic_operation">
+  <h1>Generic Operation</h1>
+
+  <div id="_editor_generic">
+    <textarea>
+select * from foo limit 3
+    </textarea>
+  </div>
+
+  <br />
+  <button class="btn_query">query</button>
+</div>
+
+<hr />
+
+ajax response
+<br />
+<textarea id="ajax_response"></textarea>
+
 </body>
 
 </html>
