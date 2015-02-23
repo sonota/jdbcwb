@@ -13,4 +13,13 @@ $(function(){
     });
   });
 
+  $(".btn_update").on("click", function(){
+    var sql = $("#_editor_generic textarea").val();
+    $.post("/api/update", {
+      sql: sql
+    }, function(data){
+      $("#ajax_response").val(JSON.stringify(data));
+    });
+  });
+
 }); 

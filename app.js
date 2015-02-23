@@ -215,12 +215,30 @@ app.post("/api/query", function(req, res){
 
 ////////////////////////////////
 
+function update(params){
+  var conn = getConnection();
+  var stmt = conn.createStatement();
+
+  puts_debug(params.sql);
+
+  var execTime = new Date();
+  var count = stmt.executeUpdate("" + params.sql);
+
+  puts_debug("count=" + count);
+
+  stmt.close();
+
+  return {
+    status: "OK",
+    count: count,
+    timestamp: date2str(execTime)
+  };
+}
+
 app.post("/api/update", function(req, res){
   return _api(req, res, function(req, res){
-    // TODO
-    return {
-      status: "OK"
-    };
+
+    return update(req.params);
   });
 });
 

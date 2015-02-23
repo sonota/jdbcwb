@@ -16,13 +16,15 @@
 
   <div id="_editor_generic">
     <textarea style="width: 100%; height: 200px;">
-    <textarea>
-select * from foo limit 3
+-- select * from foo limit 3
+delete from foo where id = 30;
+insert into foo (id, name, timestamp) values (30,'{name}', now());
     </textarea>
   </div>
 
   <br />
   <button class="btn_query">query</button>
+  <button class="btn_update">update</button>
 </div>
 
 <hr />
