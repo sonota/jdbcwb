@@ -90,7 +90,10 @@ var Jdbcwb = {};
 
       Database.multiQuery([sql], function(data){
         var result = data.results[0];
-        resboxM.set("numRows", result.numRows);
+        resboxM.set("numRows", result.numRows, {silent: true});
+        resboxM.set("colDefs", result.colDefs, {silent: true});
+        resboxM.set("rows", result.rows, {silent: true});
+        resboxM.trigger("change");
         _g.appV.unguard();
       }, function(data){
         _g.appV.unguard();
@@ -116,7 +119,9 @@ var Jdbcwb = {};
 
   _g.ResultBoxM = Backbone.Model.extend({
     defaults: {
-      numRows: null
+      numRows: null,
+      rows: [],
+      colDefs: []
     }
   });
 
@@ -126,8 +131,31 @@ var Jdbcwb = {};
     },
 
     render: function(){
+      // clear
+      this.$(".result thead").empty();
+      this.$(".result tbody").empty();
+
       var numRows = this.model.get("numRows");
       this.$(".num_rows").text(numRows != null ? numRows : "-");
+
+      // header
+      var $thead = this.$(".result thead");
+      var $tr = $('<tr><th>#</th></tr>');
+      _.each(this.model.get("colDefs"), function(colDef){
+        $tr.append('<th>' + colDef.name + '</th>');
+      });
+      $thead.append($tr);
+
+      // rows
+      var $tbody = this.$(".result tbody");
+      _.each(this.model.get("rows"), function(row, ri){
+        var rn = ri + 1;
+        var $tr = $('<tr><th>'+rn+'</th></tr>');
+        _.each(row, function(col){
+          $tr.append('<td>'+ _.escape(col) +'</td>');
+        });
+        $tbody.append($tr);
+      });
     }
   });
 

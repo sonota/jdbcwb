@@ -18,6 +18,17 @@
       background: #f8f8f8;
     }
 
+    /* Table */
+
+    table {
+      border-collapse: collapse;
+    }
+    th, td {
+      border: solid 1px #aaa;
+    }
+
+    /* Other */
+
     .guard_layer {
       width: 100%;
       height: 100%;
@@ -49,6 +60,10 @@ insert into foo (id, name, timestamp) values (30,'{name}', now());
 
   <div class="_result_box">
     <span class="num_rows">-</span> 件
+    <table class="result">
+      <thead></thead>
+      <tbody></tbody>
+    </table>
   </div>
 </div>
 
