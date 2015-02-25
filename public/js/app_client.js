@@ -11,6 +11,44 @@ var Jdbcwb = {};
 
   var _g = Jdbcwb; // global namespace alias
 
+  ////////////////////////////////
+
+  var Database = {
+
+    multiQuery: function(sqls, fnOk, fnNg){
+      $.post("/api/query", {
+        mode: null,
+        sqls: JSON.stringify(sqls)
+      }).done(function(data){
+        _g.appM.set("ajaxResponse", JSON.stringify(data));
+
+        if(data.status === 'OK'){
+          fnOk(data);
+        }else{
+          console.error(data.ex); // TODO
+          fnNg(data);
+        }
+      });
+    },
+
+    update: function(sql, fnOk, fnNg){
+      $.post("/api/update", {
+        sql: sql
+      }, function(data){
+        _g.appM.set("ajaxResponse", JSON.stringify(data));
+
+        if(data.status === 'OK'){
+          fnOk(data);
+        }else{
+          console.error(data.ex); // TODO
+          fnNg(data);
+        }
+      });
+    }
+  };
+
+  ////////////////////////////////
+
   _g.AppM = Backbone.Model.extend({
     defaults: {
       ajaxResponse: ""
@@ -48,10 +86,10 @@ var Jdbcwb = {};
       _g.appV.guard();
 
       var sql = this.$("textarea").val();
-      $.post("/api/query", {
-        sqls: JSON.stringify([sql])
+
+      Database.multiQuery([sql], function(data){
+        _g.appV.unguard();
       }, function(data){
-        _g.appM.set("ajaxResponse", JSON.stringify(data));
         _g.appV.unguard();
       });
     },
@@ -60,10 +98,10 @@ var Jdbcwb = {};
       _g.appV.guard();
 
       var sql = this.$("textarea").val();
-      $.post("/api/update", {
-        sql: sql
+
+      Database.update(sql, function(data){
+        _g.appV.unguard();
       }, function(data){
-        _g.appM.set("ajaxResponse", JSON.stringify(data));
         _g.appV.unguard();
       });
     }
