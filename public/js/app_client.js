@@ -7,6 +7,8 @@ var Jdbcwb = {};
 
 (function(){
 
+  "use strict";
+
   var _g = Jdbcwb; // global namespace alias
 
   _g.AppM = Backbone.Model.extend({
