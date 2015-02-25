@@ -83,11 +83,14 @@ var Jdbcwb = {};
     },
 
     doQuery: function(){
+      var resboxM = _g.genericOperationResultBoxM;
       _g.appV.guard();
 
       var sql = this.$("textarea").val();
 
       Database.multiQuery([sql], function(data){
+        var result = data.results[0];
+        resboxM.set("numRows", result.numRows);
         _g.appV.unguard();
       }, function(data){
         _g.appV.unguard();
@@ -95,11 +98,13 @@ var Jdbcwb = {};
     },
 
     doUpdate: function(){
+      var resboxM = _g.genericOperationResultBoxM;
       _g.appV.guard();
 
       var sql = this.$("textarea").val();
 
       Database.update(sql, function(data){
+        resboxM.set("numRows", data.count);
         _g.appV.unguard();
       }, function(data){
         _g.appV.unguard();
@@ -109,7 +114,33 @@ var Jdbcwb = {};
 
   ////////////////////////////////
 
+  _g.ResultBoxM = Backbone.Model.extend({
+    defaults: {
+      numRows: null
+    }
+  });
+
+  _g.ResultBoxV = Backbone.View.extend({
+    initialize: function(){
+      this.listenTo(this.model, "change", this.render.bind(this));
+    },
+
+    render: function(){
+      var numRows = this.model.get("numRows");
+      this.$(".num_rows").text(numRows != null ? numRows : "-");
+    }
+  });
+
+  ////////////////////////////////
+
   _g.start = function(){
+
+    _g.genericOperationResultBoxM = new _g.ResultBoxM();
+    _g.genericOperationResultBoxV = new _g.ResultBoxV({
+      el: $("#_generic_operation ._result_box"),
+      model: _g.genericOperationResultBoxM
+    });
+
     _g.genericOperationV = new _g.GenericOperationV();
 
     _g.appM = new _g.AppM();
