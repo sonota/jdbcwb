@@ -117,6 +117,16 @@ var Jdbcwb = {};
 
   ////////////////////////////////
 
+  _g.TableEditM = Backbone.Model.extend();
+
+  _g.TableEditV = Backbone.View.extend({
+    
+    el: "#_table_edit"
+    
+  });
+
+  ////////////////////////////////
+
   _g.ResultBoxM = Backbone.Model.extend({
     defaults: {
       numRows: null,
