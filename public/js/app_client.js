@@ -491,7 +491,8 @@ var Jdbcwb = {};
         this.close();
       },
       "click .btn_cancel": "close",
-      "click .is_null": "onClickIsNull"
+      "click .is_null": "onClickIsNull",
+      "input .edit": "onInputValue"
     },
 
     initialize: function(){
@@ -541,6 +542,13 @@ var Jdbcwb = {};
 
     onClickIsNull: function(){
       this.model.toggleIsNull();
+    },
+
+    onInputValue: function(){
+      var $ta = this.$("textarea.edit");
+      this.model.set("value", $ta.val(), {silent: true});
+      this.model.set("numChars", $ta.val().length, {silent: true});
+      this.model.trigger("change");
     }
   });
 
