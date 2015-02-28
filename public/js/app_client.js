@@ -40,6 +40,12 @@ var Jdbcwb = {};
     return found;
   }
 
+  function escapeForSql(val){
+    if(val === null){
+      return "NULL";
+    }
+    return "'" + ("" + val).replace( /'/g, "''") + "'";
+  }
 
   ////////////////////////////////
   // Table Utilities
@@ -283,6 +289,10 @@ var Jdbcwb = {};
       this.set("colDefs", result.colDefs, {silent: true});
       this.set("rows", result.rows, {silent: true});
       this.trigger("change");
+    },
+
+    doUpdate: function(sql, fnOk, fnNg){
+      Database.update(sql, fnOk, fnNg);
     }
   });
 
@@ -337,12 +347,90 @@ var Jdbcwb = {};
       var ci = rowV.tdToCi($td.get(0));
       if( ! this.isPrimaryKey(ci)){
         // 編集可能部分をクリックした場合
-        this.editValue($td);
+        this.editValue($td, ci);
       }
     },
 
-    editValue: function($td){
-      puts("editValue", $td); // TODO
+    editValue: function($td, ci){
+      var me = this;
+      // _g.appV.hideMsg(); // TODO
+
+      var pname = this.getColDefByIdx(ci).name;
+
+      var closestTr = $td.closest("tr").get(0);
+      var ri;
+      _.each(this.$("tbody tr"), function(tr, i){
+        if(tr === closestTr){
+          ri = i;
+        }
+      });
+      var rowV = this.rowVs[ri];
+      
+      var preVal = rowV.model.getCol(ci);
+
+      _g.editPrompt.show(preVal, function(postVal){
+        rowV.model.setCol(ci, postVal);
+
+        var pks = _.map(me.getPkDefs(), function(pkDef){
+          return {
+            pname: pkDef.name
+            ,val: rowV.model.getCol(pkDef.no - 1)
+          };
+        });
+
+        var sql = "UPDATE " + $("#_table_edit [name=table_pname]").val() // FIXME should get from resbox model
+              + "\n" + "SET " + pname + " = " + escapeForSql(postVal)
+              + "\n" + "WHERE 1=1"
+              + "\n";
+
+        pks.forEach(function(pk, i){
+          var type = me.getColTypeByPName(pk.pname);
+          sql += "  AND ";
+          sql += pk.pname
+          // + " /* "+ type +" */ "
+              + " = " + escapeForSql(pk.val) + "\n";
+        });
+        // puts(sql);
+
+        me.model.doUpdate(sql, function(data){
+          // OK
+        }, function(data){
+          // NG
+          // 変更前の値に戻す
+          rowV.model.setCol(ci, preVal);
+        });
+      });
+    },
+    
+    getColTypeByPName: function(pname){
+      var type;
+      this.model.get("colDefs").forEach(function(def){
+        if(def.name === pname){
+          type = def.type;
+          return false;
+        }
+      });
+      return type;
+    },
+
+    getPkDefs: function(){
+      var pkDefs = _.filter(this.model.get("colDefs"), function(def){
+        return def.pk != null;
+      });
+      return pkDefs;
+    },
+
+    getColDefByIdx: function(ci){
+      var me = this;
+      var cn = ci + 1;
+      var def;
+      _.each(this.model.get("colDefs"), function(it){
+        if(it.no === cn){
+          def = it;
+          return false; // break
+        }
+      });
+      return def;
     },
 
     isPrimaryKey: function(ci){
