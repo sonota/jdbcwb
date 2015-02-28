@@ -68,7 +68,7 @@ var Jdbcwb = {};
     el: "body",
 
     initialize: function(){
-      this.listenTo(this.model, "change", this.render.bind(this));
+      this.listenTo(this.model, "change", this.render);
     },
 
     render: function(){
@@ -195,7 +195,7 @@ var Jdbcwb = {};
 
   _g.ResultBoxV = Backbone.View.extend({
     initialize: function(){
-      this.listenTo(this.model, "change", this.render.bind(this));
+      this.listenTo(this.model, "change", this.render);
     },
 
     render: function(){
