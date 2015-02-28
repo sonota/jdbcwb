@@ -118,6 +118,21 @@ ajax response
 <br />
 <textarea id="ajax_response"></textarea>
 
+
+<div id="_edit_prompt" style="display: none;">
+  <div id="prompt_box" style="width: 50%; height: 40%; position: fixed; left: 25%; top: 30%; z-index: 100; background: #fff; padding: 1rem;">
+
+    <textarea class="edit" style="width: 90%; height: 50%;" ></textarea>
+    <hr />
+    <span class="num_chars">-</span> chars / 
+    <label><input class="is_null" type="checkbox" value="null" />null</label>
+    <button class="btn_ok"    >OK</button>
+    <button class="btn_cancel">Cancel</button>
+  </div>
+  <div class="guard_layer"></div>
+</div>
+
+
 <div id="guard_layer" class="guard_layer"></div>
 
 </body>

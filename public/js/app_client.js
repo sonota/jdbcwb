@@ -387,6 +387,17 @@ var Jdbcwb = {};
     }
   });
 
+  _g.EditPrompt = Backbone.View.extend({
+
+    el: "#_edit_prompt",
+
+    show: function(preVal, fn){
+      puts("edit prompt");
+      var d = new Date();
+      fn(d.getMinutes() + ":" + d.getSeconds()); // FIXME dummy value
+    }
+  });
+
   ////////////////////////////////
 
   _g.start = function(){
@@ -412,6 +423,8 @@ var Jdbcwb = {};
     _g.tableEditV = new _g.TableEditV({
       model: _g.tableEditM
     });
+
+    _g.editPrompt = new _g.EditPrompt();
 
     _g.appM = new _g.AppM();
     _g.appV = new _g.AppV({
