@@ -107,7 +107,10 @@ var Jdbcwb = {};
     },
 
     doQuery: function(){
+      var resboxM = _g.genericOperationResultBoxM;
+
       _g.appV.guard();
+      resboxM.reset();
 
       var sql = this.$("textarea").val();
 
