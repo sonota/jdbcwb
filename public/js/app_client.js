@@ -287,6 +287,7 @@ var Jdbcwb = {};
 
   _g.ResultBoxV = Backbone.View.extend({
     initialize: function(){
+      this.rowVs = [];
       this.listenTo(this.model, "change", this.render);
     },
 
@@ -303,10 +304,13 @@ var Jdbcwb = {};
       var $tbody = this.$(".result tbody");
       _.each(this.model.get("rows"), function(cols, ri){
         var $tr = $(makeDataRows(cols, ri));
+
         var rowV = new _g.RowV({
           el: $tr,
           model: new _g.RowM({ cols: cols })
         });
+        me.rowVs.push(rowV);
+
         me.listenTo(rowV, "click", function(rowV, evTarget){
           me.onClickRow(rowV, evTarget);
         });
@@ -322,6 +326,7 @@ var Jdbcwb = {};
       var numRows = this.model.get("numRows");
       this.$(".num_rows").text(numRows != null ? numRows : "-");
 
+      this.rowVs = [];
       this._renderNormalView();
     },
 
