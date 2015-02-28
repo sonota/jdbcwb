@@ -505,7 +505,18 @@ var Jdbcwb = {};
 
     initialize: function(){
       this.on("change:value", function(){
-        this.set("numChars", this.get("value").length);
+        var numChars;
+        this.set("isInvalid", false);
+        if(this.get("isNull")){
+          numChars = null;
+        }else{
+          try{
+            numChars = unescapeBackslash(this.get("value")).length;
+          } catch (ex) {
+            this.set("isInvalid", true);
+          }
+        }
+        this.set("numChars", numChars);
       });
     }
   });
@@ -540,6 +551,11 @@ var Jdbcwb = {};
       $ta.val(this.model.get("value"));
       $ta.prop("disabled", isNull);
       this.$(".is_null").prop("checked", isNull);
+
+      $ta.removeClass("invalid");
+      if(this.model.get("isInvalid")){
+        $ta.addClass("invalid");
+      }
     },
 
     show: function(value, fnOk){
