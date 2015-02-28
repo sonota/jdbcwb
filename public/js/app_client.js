@@ -16,8 +16,8 @@ var Jdbcwb = {};
   var Database = {
 
     singleQuery: function(mode, schema, tablePName, sql, fnOk, fnNg){
-      this.multiQuery(mode, schema, tablePName, [sql], function(data){
-        fnOk(data);
+      this.multiQuery(mode, schema, tablePName, [sql], function(results){
+        fnOk(results[0]);
       }, fnNg);
     },
 
@@ -31,7 +31,7 @@ var Jdbcwb = {};
         _g.appM.set("ajaxResponse", JSON.stringify(data));
 
         if(data.status === 'OK'){
-          fnOk(data);
+          fnOk(data.results);
         }else{
           console.error(data.ex); // TODO
           fnNg(data);
@@ -96,8 +96,7 @@ var Jdbcwb = {};
 
       var sql = this.$("textarea").val();
 
-      Database.singleQuery('generic', null, null, sql, function(data){
-        var result = data.results[0];
+      Database.singleQuery('generic', null, null, sql, function(result){
         resboxM.set("numRows", result.numRows, {silent: true});
         resboxM.set("colDefs", result.colDefs, {silent: true});
         resboxM.set("rows", result.rows, {silent: true});
