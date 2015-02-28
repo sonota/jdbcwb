@@ -476,6 +476,13 @@ var Jdbcwb = {};
   });
 
   _g.EditPromptM = Backbone.Model.extend({
+
+    initialize: function(){
+      this.on("change:value", function(){
+        this.set("numChars", this.get("value").length);
+      });
+    },
+
     toggleIsNull: function(){
       this.set("isNull", ! this.get("isNull") );
     }
@@ -546,9 +553,7 @@ var Jdbcwb = {};
 
     onInputValue: function(){
       var $ta = this.$("textarea.edit");
-      this.model.set("value", $ta.val(), {silent: true});
-      this.model.set("numChars", $ta.val().length, {silent: true});
-      this.model.trigger("change");
+      this.model.set("value", $ta.val());
     }
   });
 
