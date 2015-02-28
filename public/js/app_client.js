@@ -504,20 +504,22 @@ var Jdbcwb = {};
   _g.EditPromptM = Backbone.Model.extend({
 
     initialize: function(){
-      this.on("change:value", function(){
-        var numChars;
-        this.set("isInvalid", false);
-        if(this.get("isNull")){
-          numChars = null;
-        }else{
-          try{
-            numChars = unescapeBackslash(this.get("value")).length;
-          } catch (ex) {
-            this.set("isInvalid", true);
-          }
+      this.on("change:value", this.onChangeValue);
+    },
+
+    onChangeValue: function(){
+      var numChars;
+      this.set("isInvalid", false);
+      if(this.get("isNull")){
+        numChars = null;
+      }else{
+        try{
+          numChars = unescapeBackslash(this.get("value")).length;
+        } catch (ex) {
+          this.set("isInvalid", true);
         }
-        this.set("numChars", numChars);
-      });
+      }
+      this.set("numChars", numChars);
     }
   });
 
