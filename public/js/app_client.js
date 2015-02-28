@@ -301,11 +301,11 @@ var Jdbcwb = {};
 
       // rows
       var $tbody = this.$(".result tbody");
-      _.each(this.model.get("rows"), function(row, ri){
-        var $tr = $(makeDataRows(row, ri));
+      _.each(this.model.get("rows"), function(cols, ri){
+        var $tr = $(makeDataRows(cols, ri));
         var rowV = new _g.RowV({
           el: $tr,
-          model: new _g.RowM({ cols: row })
+          model: new _g.RowM({ cols: cols })
         });
         me.listenTo(rowV, "click", function(rowV, evTarget){
           me.onClickRow(rowV, evTarget);
