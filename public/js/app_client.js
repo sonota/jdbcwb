@@ -86,10 +86,7 @@ var Jdbcwb = {};
     doQuery: function(sql, viewFnOk, viewFnNg){
       var resboxM = _g.genericOperationResultBoxM;
       Database.singleQuery('generic', null, null, sql, function(result){
-        resboxM.set("numRows", result.numRows, {silent: true});
-        resboxM.set("colDefs", result.colDefs, {silent: true});
-        resboxM.set("rows", result.rows, {silent: true});
-        resboxM.trigger("change");
+        resboxM.setResult(result);
         viewFnOk();
       }, function(data){
         viewFnNg();
@@ -146,11 +143,7 @@ var Jdbcwb = {};
 
       Database.singleQuery('single_table', schema, tablePName, sql, function(result){
         // OK
-        resboxM.set("numRows", result.numRows, {silent: true});
-        resboxM.set("colDefs", result.colDefs, {silent: true});
-        resboxM.set("rows", result.rows, {silent: true});
-        resboxM.trigger("change");
-        
+        resboxM.setResult(result);
         viewFnOk();
       }, function(data){
         // NG
@@ -214,6 +207,13 @@ var Jdbcwb = {};
       this.set("rows", [], {silent: true});
       this.set("numRows", "-", {silent: true});
       this.set("numRowsAll", "-", {silent: true});
+      this.trigger("change");
+    },
+
+    setResult: function(result){
+      this.set("numRows", result.numRows, {silent: true});
+      this.set("colDefs", result.colDefs, {silent: true});
+      this.set("rows", result.rows, {silent: true});
       this.trigger("change");
     }
   });
