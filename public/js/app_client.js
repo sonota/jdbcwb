@@ -30,9 +30,10 @@ var Jdbcwb = {};
   }
 
   function isPrimaryKey(colDefs, ci){
+    var cn = ci + 1;
     var found = false;
     colDefs.forEach(function(colDef, i){
-      if(colDef.no === ci && colDef.pk !== null){
+      if(colDef.no === cn && colDef.pk !== null){
         found = true;
       }
     });
