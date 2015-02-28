@@ -15,7 +15,7 @@
     /**** Base ****/
 
     body {
-      background: #f8f8f8;
+      background: #f8f8f4;
     }
 
     /* Table */
@@ -37,6 +37,15 @@
       color: #fff;
       font-size: 100%;
       padding: 0.2rem;
+    }
+
+    hr {
+      border: solid #ccc;
+      border-width: 1px 0 0 0;
+    }
+
+    #prompt_box {
+      background: #f8f8f4;
     }
 
     ._result_box {
@@ -120,7 +129,7 @@ ajax response
 
 
 <div id="_edit_prompt" style="display: none;">
-  <div id="prompt_box" style="width: 50%; height: 40%; position: fixed; left: 25%; top: 30%; z-index: 100; background: #fff; padding: 1rem;">
+  <div id="prompt_box" style="width: 50%; height: 40%; position: fixed; left: 25%; top: 30%; z-index: 100; padding: 1rem;">
 
     <textarea class="edit" style="width: 90%; height: 50%;" ></textarea>
     <hr />
