@@ -15,9 +15,17 @@ var Jdbcwb = {};
 
   var Database = {
 
-    multiQuery: function(sqls, fnOk, fnNg){
+    singleQuery: function(mode, schema, tablePName, sql, fnOk, fnNg){
+      this.multiQuery(mode, schema, tablePName, [sql], function(data){
+        fnOk(data);
+      }, fnNg);
+    },
+
+    multiQuery: function(mode, schema, tablePName, sqls, fnOk, fnNg){
       $.post("/api/query", {
-        mode: null,
+        mode: mode,
+        schema: schema,
+        table: tablePName,
         sqls: JSON.stringify(sqls)
       }).done(function(data){
         _g.appM.set("ajaxResponse", JSON.stringify(data));
@@ -88,7 +96,7 @@ var Jdbcwb = {};
 
       var sql = this.$("textarea").val();
 
-      Database.multiQuery([sql], function(data){
+      Database.singleQuery('generic', null, null, sql, function(data){
         var result = data.results[0];
         resboxM.set("numRows", result.numRows, {silent: true});
         resboxM.set("colDefs", result.colDefs, {silent: true});
