@@ -30,6 +30,19 @@ var Jdbcwb = {};
   }
 
   ////////////////////////////////
+  // Table Utilities
+
+  function makeHeaderRows(
+    // colPNames,
+    colDefs){
+    var inner = "<th>#</th>";
+    _.each(colDefs, function(colDef){
+      inner += '<th>' + colDef.name + '</th>';
+    });
+    return '<tr>' + inner + '</tr>';
+  }
+
+  ////////////////////////////////
 
   var Database = {
 
@@ -256,12 +269,10 @@ var Jdbcwb = {};
 
     _renderNormalView: function(){
       // header
-      var $thead = this.$(".result thead");
-      var $tr = $('<tr><th>#</th></tr>');
-      _.each(this.model.get("colDefs"), function(colDef){
-        $tr.append('<th>' + colDef.name + '</th>');
-      });
-      $thead.append($tr);
+      this.$(".result thead").append(makeHeaderRows(
+        // colPNames,
+        this.model.get("colDefs")
+      ));
 
       // rows
       var $tbody = this.$(".result tbody");
