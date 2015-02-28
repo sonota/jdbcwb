@@ -303,7 +303,10 @@ var Jdbcwb = {};
       var $tbody = this.$(".result tbody");
       _.each(this.model.get("rows"), function(row, ri){
         var $tr = $(makeDataRows(row, ri));
-        var rowV = new _g.RowV({ el: $tr });
+        var rowV = new _g.RowV({
+          el: $tr,
+          model: new _g.RowM({ cols: row })
+        });
         me.listenTo(rowV, "click", function(rowV, evTarget){
           me.onClickRow(rowV, evTarget);
         });
@@ -338,6 +341,24 @@ var Jdbcwb = {};
 
     isPrimaryKey: function(ci){
       return isPrimaryKey(this.model.get("colDefs"), ci);
+    }
+  });
+
+  _g.RowM = Backbone.Model.extend({
+
+    defaults: {
+      cols: []
+    },
+
+    getCol: function(ci){
+      return this.get("cols")[ci];
+    },
+
+    setCol: function(ci, val){
+      var cols = this.get("cols");
+      cols[ci] = val;
+      this.set("cols", null, {silent: true});
+      this.set("cols", cols);
     }
   });
 
