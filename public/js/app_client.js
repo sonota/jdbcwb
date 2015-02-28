@@ -165,7 +165,6 @@ var Jdbcwb = {};
 
     doQuery: function(ev){
       ev.preventDefault();
-      var me = this;
       var resboxM = _g.tableEditResultBoxM;
 
       _g.appV.guard();
