@@ -503,12 +503,11 @@ var Jdbcwb = {};
       var $ta = this.$("textarea.edit");
       var isNull = this.model.get("isNull");
       if(isNull){
-        $ta.val("");
         this.$(".num_chars").text("-");
       }else{
-        $ta.val(this.model.get("value"));
         this.$(".num_chars").text(this.model.get("numChars"));
       }
+      $ta.val(this.model.get("value"));
       $ta.prop("disabled", isNull);
       this.$(".is_null").prop("checked", isNull);
     },
