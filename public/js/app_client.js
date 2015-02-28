@@ -47,6 +47,18 @@ var Jdbcwb = {};
     return "'" + ("" + val).replace( /'/g, "''") + "'";
   }
 
+  function escapeBackslash(str){
+    if(str == null) return null;
+    return JSON.stringify(str)
+        .replace(/^"/, "")
+        .replace(/"$/, "");
+  }
+
+  function unescapeBackslash(str){
+    if(str == null) return null;
+    return JSON.parse('"' + str + '"');
+  }
+
   ////////////////////////////////
   // Table Utilities
 
@@ -368,7 +380,8 @@ var Jdbcwb = {};
       
       var preVal = rowV.model.getCol(ci);
 
-      _g.editPromptV.show(preVal, function(postVal){
+      _g.editPromptV.show(escapeBackslash(preVal), function(postValEsc){
+        var postVal = unescapeBackslash(postValEsc);
         rowV.model.setCol(ci, postVal);
 
         var pks = _.map(me.getPkDefs(), function(pkDef){
