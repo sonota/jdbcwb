@@ -128,8 +128,45 @@ var Jdbcwb = {};
 
   _g.TableEditV = Backbone.View.extend({
     
-    el: "#_table_edit"
-    
+    el: "#_table_edit",
+
+    events: {
+      "click .btn_query": "doQuery"
+    },
+
+    doQuery: function(ev){
+      ev.preventDefault();
+      var me = this;
+      var resboxM = _g.tableEditResultBoxM;
+
+      _g.appV.guard();
+      // _g.appV.hideMsg(); // TODO
+      resboxM.reset();
+      this.colDefs = null;
+
+      var schema = this.$("[name=schema]").val();
+      var tablePName = this.$("[name=table_pname]").val();
+      var sql = this.makeSql(tablePName);
+
+      Database.singleQuery('single_table', schema, tablePName, sql, function(result){
+        // OK
+        resboxM.set("numRows", result.numRows, {silent: true});
+        resboxM.set("colDefs", result.colDefs, {silent: true});
+        resboxM.set("rows", result.rows, {silent: true});
+        resboxM.trigger("change");
+        _g.appV.unguard();
+      }, function(data){
+        // NG
+        _g.appV.unguard();
+      });
+    },
+
+    makeSql: function(tablePName){
+      return [
+        "SELECT *",
+        "FROM " + tablePName
+      ].join("\n");
+    }
   });
 
   ////////////////////////////////
@@ -139,6 +176,20 @@ var Jdbcwb = {};
       numRows: null,
       rows: [],
       colDefs: []
+    },
+
+    reset: function(){
+      this.set("data", {
+        colDefs: [],
+        rows: [],
+        numRows: "-",
+        numRowsAll: "-"
+      });
+      this.set("colDefs", [], {silent: true});
+      this.set("rows", [], {silent: true});
+      this.set("numRows", "-", {silent: true});
+      this.set("numRowsAll", "-", {silent: true});
+      this.trigger("change");
     }
   });
 
@@ -186,7 +237,14 @@ var Jdbcwb = {};
       model: _g.genericOperationResultBoxM
     });
 
+    _g.tableEditResultBoxM = new _g.ResultBoxM();
+    _g.tableEditResultBoxV = new _g.ResultBoxV({
+      el: $("#_table_edit ._result_box"),
+      model: _g.tableEditResultBoxM
+    });
+
     _g.genericOperationV = new _g.GenericOperationV();
+    _g.tableEditV = new _g.TableEditV();
 
     _g.appM = new _g.AppM();
     _g.appV = new _g.AppV({

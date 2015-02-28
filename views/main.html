@@ -69,6 +69,21 @@ insert into foo (id, name, timestamp) values (30,'{name}', now());
 
 <div id="_table_edit">
   <h1>Table Edit</h1>
+
+  <form>
+    schema <input name="schema" type="text" value="test" />
+    table <input name="table_pname" type="text" value="foo" />
+    <br />
+    <button class="btn_query">query</button>
+  </form>
+
+  <div class="_result_box">
+    <span class="num_rows">-</span> 件
+    <table class="result">
+      <thead></thead>
+      <tbody></tbody>
+    </table>
+  </div>
 </div>
 
 <hr />
