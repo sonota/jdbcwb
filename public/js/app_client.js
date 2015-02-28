@@ -254,14 +254,7 @@ var Jdbcwb = {};
       this.listenTo(this.model, "change", this.render);
     },
 
-    render: function(){
-      // clear
-      this.$(".result thead").empty();
-      this.$(".result tbody").empty();
-
-      var numRows = this.model.get("numRows");
-      this.$(".num_rows").text(numRows != null ? numRows : "-");
-
+    _renderNormalView: function(){
       // header
       var $thead = this.$(".result thead");
       var $tr = $('<tr><th>#</th></tr>');
@@ -284,6 +277,17 @@ var Jdbcwb = {};
         });
         $tbody.append($tr);
       });
+    },
+
+    render: function(){
+      // clear
+      this.$(".result thead").empty();
+      this.$(".result tbody").empty();
+
+      var numRows = this.model.get("numRows");
+      this.$(".num_rows").text(numRows != null ? numRows : "-");
+      
+      this._renderNormalView();
     }
   });
 
