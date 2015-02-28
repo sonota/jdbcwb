@@ -11,6 +11,24 @@ var Jdbcwb = {};
 
   var _g = Jdbcwb; // global namespace alias
 
+  var COL_CONTENT_LENGTH_MAX = 32;
+
+  ////////////////////////////////
+
+  function snipLongContent(str){
+    if(str == null){
+      return null;
+    }
+    if(str.length > COL_CONTENT_LENGTH_MAX){
+      var snip = "...";
+      var half = Math.floor((COL_CONTENT_LENGTH_MAX - snip.length) / 2);
+      var head = str.substring(0, half);
+      var tail = str.substring(str.length - half, str.length);
+      str = head + '<span class="col_snip">' + snip + '</span>' + tail;
+    }
+    return str;
+  }
+
   ////////////////////////////////
 
   var Database = {
@@ -59,7 +77,12 @@ var Jdbcwb = {};
 
   _g.AppM = Backbone.Model.extend({
     defaults: {
-      ajaxResponse: ""
+      ajaxResponse: "",
+      snipLongContent: true
+    },
+
+    toggleSnipLongContent: function(){
+      this.set("snipLongContent", ! this.get("snipLongContent") );
     }
   });
 
@@ -67,12 +90,20 @@ var Jdbcwb = {};
 
     el: "body",
 
+    events: {
+      "click .snip_long_content": function(){
+        this.model.toggleSnipLongContent();
+      }
+    },
+
     initialize: function(){
       this.listenTo(this.model, "change", this.render);
     },
 
     render: function(){
       $("#ajax_response").val(this.model.get("ajaxResponse"));
+      this.$(".snip_long_content")
+          .prop("checked", this.model.get("snipLongContent"));
     },
 
     guard:   function(){ this.$("#guard_layer").show(); },
@@ -245,7 +276,11 @@ var Jdbcwb = {};
         var rn = ri + 1;
         var $tr = $('<tr><th>'+rn+'</th></tr>');
         _.each(row, function(col){
-          $tr.append('<td>'+ _.escape(col) +'</td>');
+          var content = col;
+          if(_g.appM.get("snipLongContent")){
+            content = snipLongContent(col);
+          }
+          $tr.append('<td>'+ content +'</td>');
         });
         $tbody.append($tr);
       });
