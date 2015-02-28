@@ -475,14 +475,72 @@ var Jdbcwb = {};
     }
   });
 
+  _g.EditPromptM = Backbone.Model.extend({
+    toggleIsNull: function(){
+      this.set("isNull", ! this.get("isNull") );
+    }
+  });
+
   _g.EditPromptV = Backbone.View.extend({
 
     el: "#_edit_prompt",
 
-    show: function(preVal, fn){
-      puts("edit prompt");
-      var d = new Date();
-      fn(d.getMinutes() + ":" + d.getSeconds()); // FIXME dummy value
+    events: {
+      "click .btn_ok": function(){
+        this.fnOk(this.val());
+        this.close();
+      },
+      "click .btn_cancel": "close",
+      "click .is_null": "onClickIsNull"
+    },
+
+    initialize: function(){
+      this.listenTo(this.model, "change", this.render);
+    },
+
+    render: function(){
+      var $ta = this.$("textarea.edit");
+      var isNull = this.model.get("isNull");
+      if(isNull){
+        $ta.val("");
+        this.$(".num_chars").text("-");
+      }else{
+        $ta.val(this.model.get("value"));
+        this.$(".num_chars").text(this.model.get("numChars"));
+      }
+      $ta.prop("disabled", isNull);
+      this.$(".is_null").prop("checked", isNull);
+    },
+
+    show: function(value, fnOk){
+
+      this.fnOk = fnOk;
+
+      var isNull = (value == null);
+      this.model.set("isNull", isNull, {silent: true});
+      this.model.set("value", value, {silent: true});
+      this.model.set("numChars", isNull ? null : value.length, {silent: true});
+      this.model.trigger("change");
+
+      this.$el.show();
+      this.$(".guard_layer").show();
+    },
+
+    close: function(){
+      this.$el.hide();
+    },
+
+    val: function(){
+      var $ta = this.$("textarea.edit");
+      var v = null;
+      if( ! this.model.get("isNull") ){
+        v = $ta.val();
+      }
+      return v;
+    },
+
+    onClickIsNull: function(){
+      this.model.toggleIsNull();
     }
   });
 
@@ -512,7 +570,10 @@ var Jdbcwb = {};
       model: _g.tableEditM
     });
 
-    _g.editPromptV = new _g.EditPromptV();
+    _g.editPromptM = new _g.EditPromptM();
+    _g.editPromptV = new _g.EditPromptV({
+      model: _g.editPromptM
+    });
 
     _g.appM = new _g.AppM();
     _g.appV = new _g.AppV({
