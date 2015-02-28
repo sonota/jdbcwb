@@ -368,7 +368,7 @@ var Jdbcwb = {};
       
       var preVal = rowV.model.getCol(ci);
 
-      _g.editPrompt.show(preVal, function(postVal){
+      _g.editPromptV.show(preVal, function(postVal){
         rowV.model.setCol(ci, postVal);
 
         var pks = _.map(me.getPkDefs(), function(pkDef){
@@ -475,7 +475,7 @@ var Jdbcwb = {};
     }
   });
 
-  _g.EditPrompt = Backbone.View.extend({
+  _g.EditPromptV = Backbone.View.extend({
 
     el: "#_edit_prompt",
 
@@ -512,7 +512,7 @@ var Jdbcwb = {};
       model: _g.tableEditM
     });
 
-    _g.editPrompt = new _g.EditPrompt();
+    _g.editPromptV = new _g.EditPromptV();
 
     _g.appM = new _g.AppM();
     _g.appV = new _g.AppV({
