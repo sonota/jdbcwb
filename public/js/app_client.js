@@ -81,6 +81,22 @@ var Jdbcwb = {};
 
   ////////////////////////////////
 
+  _g.GenericOperationM = Backbone.Model.extend({
+
+    doQuery: function(sql, viewFnOk, viewFnNg){
+      var resboxM = _g.genericOperationResultBoxM;
+      Database.singleQuery('generic', null, null, sql, function(result){
+        resboxM.set("numRows", result.numRows, {silent: true});
+        resboxM.set("colDefs", result.colDefs, {silent: true});
+        resboxM.set("rows", result.rows, {silent: true});
+        resboxM.trigger("change");
+        viewFnOk();
+      }, function(data){
+        viewFnNg();
+      });
+    }
+  });
+
   _g.GenericOperationV = Backbone.View.extend({
 
     el: "#_generic_operation",
@@ -91,18 +107,13 @@ var Jdbcwb = {};
     },
 
     doQuery: function(){
-      var resboxM = _g.genericOperationResultBoxM;
       _g.appV.guard();
 
       var sql = this.$("textarea").val();
 
-      Database.singleQuery('generic', null, null, sql, function(result){
-        resboxM.set("numRows", result.numRows, {silent: true});
-        resboxM.set("colDefs", result.colDefs, {silent: true});
-        resboxM.set("rows", result.rows, {silent: true});
-        resboxM.trigger("change");
+      this.model.doQuery(sql, function(){
         _g.appV.unguard();
-      }, function(data){
+      }, function(){
         _g.appV.unguard();
       });
     },
@@ -124,7 +135,25 @@ var Jdbcwb = {};
 
   ////////////////////////////////
 
-  _g.TableEditM = Backbone.Model.extend();
+  _g.TableEditM = Backbone.Model.extend({
+
+    doQuery: function(schema, tablePName, sql, viewFnOk, viewFnNg){
+      var resboxM = _g.tableEditResultBoxM;
+
+      Database.singleQuery('single_table', schema, tablePName, sql, function(result){
+        // OK
+        resboxM.set("numRows", result.numRows, {silent: true});
+        resboxM.set("colDefs", result.colDefs, {silent: true});
+        resboxM.set("rows", result.rows, {silent: true});
+        resboxM.trigger("change");
+        
+        viewFnOk();
+      }, function(data){
+        // NG
+        viewFnNg();
+      });
+    }
+  });
 
   _g.TableEditV = Backbone.View.extend({
     
@@ -148,15 +177,9 @@ var Jdbcwb = {};
       var tablePName = this.$("[name=table_pname]").val();
       var sql = this.makeSql(tablePName);
 
-      Database.singleQuery('single_table', schema, tablePName, sql, function(result){
-        // OK
-        resboxM.set("numRows", result.numRows, {silent: true});
-        resboxM.set("colDefs", result.colDefs, {silent: true});
-        resboxM.set("rows", result.rows, {silent: true});
-        resboxM.trigger("change");
+      this.model.doQuery(schema, tablePName, sql, function(){
         _g.appV.unguard();
-      }, function(data){
-        // NG
+      }, function(){
         _g.appV.unguard();
       });
     },
@@ -243,8 +266,15 @@ var Jdbcwb = {};
       model: _g.tableEditResultBoxM
     });
 
-    _g.genericOperationV = new _g.GenericOperationV();
-    _g.tableEditV = new _g.TableEditV();
+    _g.genericOperationM = new _g.GenericOperationM();
+    _g.genericOperationV = new _g.GenericOperationV({
+      model: _g.genericOperationM
+    });
+    
+    _g.tableEditM = new _g.TableEditM();
+    _g.tableEditV = new _g.TableEditV({
+      model: _g.tableEditM
+    });
 
     _g.appM = new _g.AppM();
     _g.appV = new _g.AppV({
