@@ -140,8 +140,9 @@ var Jdbcwb = {};
 
   _g.TableEditM = Backbone.Model.extend({
 
-    doQuery: function(schema, tablePName, sql, viewFnOk, viewFnNg){
+    doQuery: function(schema, tablePName, viewFnOk, viewFnNg){
       var resboxM = _g.tableEditResultBoxM;
+      var sql = this.makeSql(tablePName);
 
       Database.singleQuery('single_table', schema, tablePName, sql, function(result){
         // OK
@@ -155,6 +156,13 @@ var Jdbcwb = {};
         // NG
         viewFnNg();
       });
+    },
+
+    makeSql: function(tablePName){
+      return [
+        "SELECT *",
+        "FROM " + tablePName
+      ].join("\n");
     }
   });
 
@@ -177,20 +185,12 @@ var Jdbcwb = {};
 
       var schema = this.$("[name=schema]").val();
       var tablePName = this.$("[name=table_pname]").val();
-      var sql = this.makeSql(tablePName);
 
-      this.model.doQuery(schema, tablePName, sql, function(){
+      this.model.doQuery(schema, tablePName, function(){
         _g.appV.unguard();
       }, function(){
         _g.appV.unguard();
       });
-    },
-
-    makeSql: function(tablePName){
-      return [
-        "SELECT *",
-        "FROM " + tablePName
-      ].join("\n");
     }
   });
 
