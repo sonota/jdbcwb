@@ -42,6 +42,18 @@ var Jdbcwb = {};
     return '<tr>' + inner + '</tr>';
   }
 
+  function makeDataRows(row, ri){
+    var inner = '<th>' + (ri + 1) + '</th>';
+    _.each(row, function(col){
+      var content = col;
+      if(_g.appM.get("snipLongContent")){
+        content = snipLongContent(col);
+      }
+      inner += '<td>'+ content +'</td>';
+    });
+    return '<tr>' + inner + '</tr>';
+  }
+
   ////////////////////////////////
 
   var Database = {
@@ -277,16 +289,7 @@ var Jdbcwb = {};
       // rows
       var $tbody = this.$(".result tbody");
       _.each(this.model.get("rows"), function(row, ri){
-        var rn = ri + 1;
-        var $tr = $('<tr><th>'+rn+'</th></tr>');
-        _.each(row, function(col){
-          var content = col;
-          if(_g.appM.get("snipLongContent")){
-            content = snipLongContent(col);
-          }
-          $tr.append('<td>'+ content +'</td>');
-        });
-        $tbody.append($tr);
+        $tbody.append(makeDataRows(row, ri));
       });
     },
 
