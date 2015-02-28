@@ -491,6 +491,7 @@ var Jdbcwb = {};
         this.close();
       },
       "click .btn_cancel": "close",
+      "click .guard_layer": "close",
       "click .is_null": "onClickIsNull",
       "input .edit": "onInputValue"
     },
