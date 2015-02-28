@@ -85,7 +85,7 @@ var Jdbcwb = {};
       }
       inner += '<td>'+ content +'</td>';
     });
-    return '<tr>' + inner + '</tr>';
+    return inner;
   }
 
   ////////////////////////////////
@@ -326,18 +326,15 @@ var Jdbcwb = {};
       // rows
       var $tbody = this.$(".result tbody");
       _.each(this.model.get("rows"), function(cols, ri){
-        var $tr = $(makeDataRows(cols, ri));
-
         var rowV = new _g.RowV({
-          el: $tr,
-          model: new _g.RowM({ cols: cols })
+          model: new _g.RowM({ ri: ri, cols: cols })
         });
         me.rowVs.push(rowV);
 
         me.listenTo(rowV, "click", function(rowV, evTarget){
           me.onClickRow(rowV, evTarget);
         });
-        $tbody.append($tr);
+        $tbody.append(rowV.render().el);
       });
     },
 
@@ -470,10 +467,26 @@ var Jdbcwb = {};
   });
 
   _g.RowV = Backbone.View.extend({
+
+    tagName: "tr",
+
     events: {
       "click": function(ev){
         this.trigger("click", this, ev.target);
       }
+    },
+
+    initialize: function(){
+      this.listenTo(this.model, "change", this.render);
+    },
+
+    render: function(){
+      this.$el.html(makeDataRows(
+        this.model.get("cols"),
+        this.model.get("ri")
+      ));
+
+      return this;
     },
 
     tdToCi: function(td){
