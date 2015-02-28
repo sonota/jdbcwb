@@ -29,6 +29,17 @@ var Jdbcwb = {};
     return str;
   }
 
+  function isPrimaryKey(colDefs, ci){
+    var found = false;
+    colDefs.forEach(function(colDef, i){
+      if(colDef.no === ci && colDef.pk !== null){
+        found = true;
+      }
+    });
+    return found;
+  }
+
+
   ////////////////////////////////
   // Table Utilities
 
@@ -280,6 +291,8 @@ var Jdbcwb = {};
     },
 
     _renderNormalView: function(){
+      var me = this;
+
       // header
       this.$(".result thead").append(makeHeaderRows(
         // colPNames,
@@ -289,7 +302,12 @@ var Jdbcwb = {};
       // rows
       var $tbody = this.$(".result tbody");
       _.each(this.model.get("rows"), function(row, ri){
-        $tbody.append(makeDataRows(row, ri));
+        var $tr = $(makeDataRows(row, ri));
+        var rowV = new _g.RowV({ el: $tr });
+        me.listenTo(rowV, "click", function(rowV, evTarget){
+          me.onClickRow(rowV, evTarget);
+        });
+        $tbody.append($tr);
       });
     },
 
@@ -300,8 +318,45 @@ var Jdbcwb = {};
 
       var numRows = this.model.get("numRows");
       this.$(".num_rows").text(numRows != null ? numRows : "-");
-      
+
       this._renderNormalView();
+    },
+
+    onClickRow: function(rowV, evTarget){
+      // TODO th case
+      var $td = $(evTarget).closest("td");
+      var ci = rowV.tdToCi($td.get(0));
+      if( ! this.isPrimaryKey(ci)){
+        // 編集可能部分をクリックした場合
+        this.editValue($td);
+      }
+    },
+
+    editValue: function($td){
+      puts("editValue", $td); // TODO
+    },
+
+    isPrimaryKey: function(ci){
+      return isPrimaryKey(this.model.get("colDefs"), ci);
+    }
+  });
+
+  _g.RowV = Backbone.View.extend({
+    events: {
+      "click": function(ev){
+        this.trigger("click", this, ev.target);
+      }
+    },
+
+    tdToCi: function(td){
+      var ci;
+      this.$el.find("td").each(function(i, _td){
+        if(_td === td){
+          ci = i;
+          return false; // break
+        }
+      });
+      return ci;
     }
   });
 
