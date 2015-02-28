@@ -59,6 +59,10 @@ var Jdbcwb = {};
     return JSON.parse('"' + str + '"');
   }
 
+  function toggleBool(model, name){
+    model.set(name, ! model.get(name));
+  }
+
   ////////////////////////////////
   // Table Utilities
 
@@ -134,10 +138,6 @@ var Jdbcwb = {};
     defaults: {
       ajaxResponse: "",
       snipLongContent: true
-    },
-
-    toggleSnipLongContent: function(){
-      this.set("snipLongContent", ! this.get("snipLongContent") );
     }
   });
 
@@ -147,7 +147,7 @@ var Jdbcwb = {};
 
     events: {
       "click .snip_long_content": function(){
-        this.model.toggleSnipLongContent();
+        toggleBool(this.model, "snipLongContent");
       }
     },
 
@@ -494,10 +494,6 @@ var Jdbcwb = {};
       this.on("change:value", function(){
         this.set("numChars", this.get("value").length);
       });
-    },
-
-    toggleIsNull: function(){
-      this.set("isNull", ! this.get("isNull") );
     }
   });
 
@@ -561,7 +557,7 @@ var Jdbcwb = {};
     },
 
     onClickIsNull: function(){
-      this.model.toggleIsNull();
+      toggleBool(this.model, "isNull");
     },
 
     onInputValue: function(){
