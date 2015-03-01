@@ -357,7 +357,6 @@ var Jdbcwb = {};
     },
 
     onDblclickRow: function(rowV, evTarget){
-      // TODO th case
       var $td = $(evTarget).closest("td");
       var ci = rowV.tdToCi($td.get(0));
       if( ! this.isPrimaryKey(ci)){
@@ -436,7 +435,8 @@ var Jdbcwb = {};
   _g.RowM = Backbone.Model.extend({
 
     defaults: {
-      cols: []
+      cols: [],
+      isSelected: false
     },
 
     getCol: function(ci){
@@ -456,6 +456,11 @@ var Jdbcwb = {};
     tagName: "tr",
 
     events: {
+      "click": function(ev){
+        if(ev.target.tagName === "TH"){
+          toggleBool(this.model, "isSelected");
+        }
+      },
       "dblclick": function(ev){
         this.trigger("dblclick", this, ev.target);
       }
@@ -470,6 +475,12 @@ var Jdbcwb = {};
         this.model.get("cols"),
         this.model.get("ri")
       ));
+
+      if(this.model.get("isSelected")){
+        this.$el.addClass("selected");
+      }else{
+        this.$el.removeClass("selected");
+      }
 
       return this;
     },
