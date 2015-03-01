@@ -373,11 +373,8 @@ var Jdbcwb = {};
       var pname = this.getColDefByIdx(ci).name;
 
       var closestTr = $td.closest("tr").get(0);
-      var ri;
-      _.each(this.$("tbody tr"), function(tr, i){
-        if(tr === closestTr){
-          ri = i;
-        }
+      var ri = _.findIndex(this.$("tbody tr"), function(tr){
+        return tr === closestTr;
       });
       var rowV = this.rowVs[ri];
       
@@ -478,14 +475,9 @@ var Jdbcwb = {};
     },
 
     tdToCi: function(td){
-      var ci;
-      this.$el.find("td").each(function(i, _td){
-        if(_td === td){
-          ci = i;
-          return false; // break
-        }
+      return _.findIndex(this.$el.find("td"), function(it){
+        return it === td;
       });
-      return ci;
     }
   });
 
