@@ -66,6 +66,10 @@ var Jdbcwb = {};
     model.set(name, ! model.get(name));
   }
 
+  function htmlSpan(content, className){
+    return '<span class="'+ className +'">' + content + '</span>';
+  }
+
   ////////////////////////////////
   // Table Utilities
 
@@ -84,16 +88,16 @@ var Jdbcwb = {};
     _.each(row, function(col){
       var content;
       if(col == null){
-        content = '<span class="col_null">(null)</span>';
+        content = htmlSpan("(null)", "col_null");
       }else if(col === ''){
-        content = '<span class="col_blank">(blank)</span>';
+        content = htmlSpan("(blank)", "col_blank");
       }else{
         if(_g.appM.get("snipLongContent")){
           content = snipLongContent(col);
         }
         content = content
-            .replace(RE_WHITESPACE, '<span class="col_space">&nbsp;</span>')
-            .replace(SNIP_MARKER, '<span class="col_snip">' + SNIP_STR + '</span>');
+            .replace(RE_WHITESPACE, htmlSpan("&nbsp;", "col_space"))
+            .replace(SNIP_MARKER, htmlSpan(SNIP_STR, "col_snip"));
       }
       inner += '<td>' + content + '</td>';
     });
