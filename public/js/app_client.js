@@ -284,6 +284,7 @@ var Jdbcwb = {};
   _g.ResultBoxM = Backbone.Model.extend({
     defaults: {
       numRows: null,
+      numRowsAll: null,
       rows: [],
       colDefs: []
     },
@@ -303,9 +304,10 @@ var Jdbcwb = {};
     },
 
     setResult: function(result){
-      this.set("numRows", result.numRows, {silent: true});
       this.set("colDefs", result.colDefs, {silent: true});
       this.set("rows", result.rows, {silent: true});
+      this.set("numRows", result.numRows, {silent: true});
+      this.set("numRowsAll", result.numRowsAll, {silent: true});
       this.trigger("change");
     },
 
@@ -350,7 +352,9 @@ var Jdbcwb = {};
       this.$(".result tbody").empty();
 
       var numRows = this.model.get("numRows");
+      var numRowsAll = this.model.get("numRowsAll");
       this.$(".num_rows").text(numRows != null ? numRows : "-");
+      this.$(".num_rows_all").text(numRowsAll != null ? numRowsAll : "-");
 
       this.rowVs = [];
       this._renderNormalView();
