@@ -313,6 +313,11 @@ var Jdbcwb = {};
   });
 
   _g.ResultBoxV = Backbone.View.extend({
+
+    events: {
+      "click .btn_delete": "onClickDelete"
+    },
+
     initialize: function(){
       this.rowVs = [];
       this.listenTo(this.model, "change", this.render);
@@ -363,6 +368,44 @@ var Jdbcwb = {};
         // 編集可能部分をクリックした場合
         this.editValue($td, ci);
       }
+    },
+
+    onClickDelete: function(){
+      var me = this;
+      _g.appV.guard();
+
+      var tablePName = $("#_table_edit [name=table_pname]").val(); // FIXME
+
+      var pkDefs = _.filter(this.model.get("colDefs"), function(def){
+        return def.pk != null;
+      });
+
+      var rowMsToDel = _.chain(this.rowVs)
+          .map(function(rowV){ return rowV.model; })
+          .filter(function(rowM){ return rowM.get("isSelected"); })
+          .value();
+
+      _.each(rowMsToDel, function(rowM){
+        var sql = "DELETE FROM " + tablePName
+              + "\n" + "WHERE 1=1";
+        _.each(pkDefs, function(def, i){
+          sql += "\n" + "  AND ";
+          sql += def.name + " = "
+              + escapeForSql(rowM.getCol(def.no - 1));
+        });
+        // puts(sql);
+
+        rowM.doDelete(sql, function(){
+          var newRowVs = _.filter(me.rowVs, function(rowV){
+            return rowV.model !== rowM;
+          });
+          me.rowVs = newRowVs;
+
+          _g.appV.unguard();
+        }, function(){
+          _g.appV.unguard();
+        });
+      });
     },
 
     editValue: function($td, ci){
@@ -448,6 +491,14 @@ var Jdbcwb = {};
       cols[ci] = val;
       this.set("cols", null, {silent: true});
       this.set("cols", cols);
+    },
+
+    doDelete: function(sql, fnOk, fnNg){
+      var me = this;
+      Database.update(sql, function(){
+        me.trigger("delete");
+        fnOk();
+      }, fnNg);
     }
   });
 
@@ -468,6 +519,12 @@ var Jdbcwb = {};
 
     initialize: function(){
       this.listenTo(this.model, "change", this.render);
+      this.listenTo(this.model, "delete", function(){
+        var me = this;
+        this.$el.hide(1000, function(){
+          me.$el.remove();
+        });
+      });
     },
 
     render: function(){
