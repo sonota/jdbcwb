@@ -419,14 +419,10 @@ var Jdbcwb = {};
     },
     
     getColTypeByPName: function(pname){
-      var type;
-      this.model.get("colDefs").forEach(function(def){
-        if(def.name === pname){
-          type = def.type;
-          return false;
-        }
+      var colDef = _.find(this.model.get("colDefs"), function(def){
+        return def.name === pname;
       });
-      return type;
+      return colDef ? colDef.type : null;
     },
 
     getPkDefs: function(){
