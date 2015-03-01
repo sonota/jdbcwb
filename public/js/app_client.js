@@ -97,6 +97,10 @@ var Jdbcwb = {};
         }
         content = content
             .replace(RE_WHITESPACE, htmlSpan("&nbsp;", "col_space"))
+            .replace(/\\/g, htmlSpan("\\\\", "col_ctrl_cd"))
+            .replace(/\r/g, htmlSpan("\\r" , "col_ctrl_cd"))
+            .replace(/\n/g, htmlSpan("\\n" , "col_ctrl_cd"))
+            .replace(/\t/g, htmlSpan("\\t" , "col_ctrl_cd"))
             .replace(SNIP_MARKER, htmlSpan(SNIP_STR, "col_snip"));
       }
       inner += '<td>' + content + '</td>';
