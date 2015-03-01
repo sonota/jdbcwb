@@ -40,7 +40,7 @@ var Jdbcwb = {};
     if(val === null){
       return "NULL";
     }
-    return "'" + ("" + val).replace( /'/g, "''") + "'";
+    return "'" + ("" + val).replace(/'/g, "''") + "'";
   }
 
   function escapeBackslash(str){
@@ -85,7 +85,7 @@ var Jdbcwb = {};
           content = snipLongContent(col);
         }
       }
-      inner += '<td>'+ content +'</td>';
+      inner += '<td>' + content + '</td>';
     });
     return inner;
   }
@@ -388,6 +388,7 @@ var Jdbcwb = {};
           .value();
 
       _.each(rowMsToDel, function(rowM){
+        // TODO mv to model
         var sql = "DELETE FROM " + tablePName
               + "\n" + "WHERE 1=1";
         _.each(pkDefs, function(def, i){
@@ -477,6 +478,8 @@ var Jdbcwb = {};
     }
   });
 
+  ////////////////////////////////
+
   _g.RowM = Backbone.Model.extend({
 
     defaults: {
@@ -550,6 +553,8 @@ var Jdbcwb = {};
       });
     }
   });
+
+  ////////////////////////////////
 
   _g.EditPromptM = Backbone.Model.extend({
 
