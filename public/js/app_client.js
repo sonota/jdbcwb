@@ -400,10 +400,8 @@ var Jdbcwb = {};
               + "\n";
 
         pks.forEach(function(pk, i){
-          var type = me.getColTypeByPName(pk.pname);
           sql += "  AND ";
           sql += pk.pname
-          // + " /* "+ type +" */ "
               + " = " + escapeForSql(pk.val) + "\n";
         });
         // puts(sql);
@@ -418,13 +416,6 @@ var Jdbcwb = {};
       });
     },
     
-    getColTypeByPName: function(pname){
-      var colDef = _.find(this.model.get("colDefs"), function(def){
-        return def.name === pname;
-      });
-      return colDef ? colDef.type : null;
-    },
-
     getPkDefs: function(){
       var pkDefs = _.filter(this.model.get("colDefs"), function(def){
         return def.pk != null;
