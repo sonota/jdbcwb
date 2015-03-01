@@ -175,13 +175,13 @@ var Jdbcwb = {};
 
   _g.GenericOperationM = Backbone.Model.extend({
 
-    doQuery: function(sql, viewFnOk, viewFnNg){
+    doQuery: function(sql, fnOk, fnNg){
       var resboxM = _g.genericOperationResultBoxM;
       Database.singleQuery('generic', null, null, sql, function(result){
         resboxM.setResult(result);
-        viewFnOk();
+        fnOk();
       }, function(data){
-        viewFnNg();
+        fnNg();
       });
     }
   });
@@ -229,17 +229,17 @@ var Jdbcwb = {};
 
   _g.TableEditM = Backbone.Model.extend({
 
-    doQuery: function(schema, tablePName, viewFnOk, viewFnNg){
+    doQuery: function(schema, tablePName, fnOk, fnNg){
       var resboxM = _g.tableEditResultBoxM;
       var sql = this.makeSql(tablePName);
 
       Database.singleQuery('single_table', schema, tablePName, sql, function(result){
         // OK
         resboxM.setResult(result);
-        viewFnOk();
+        fnOk();
       }, function(data){
         // NG
-        viewFnNg();
+        fnNg();
       });
     },
 
