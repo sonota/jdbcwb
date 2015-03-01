@@ -293,13 +293,13 @@ var Jdbcwb = {};
       this.set("data", {
         colDefs: [],
         rows: [],
-        numRows: "-",
-        numRowsAll: "-"
+        numRows: null,
+        numRowsAll: null
       });
       this.set("colDefs", [], {silent: true});
       this.set("rows", [], {silent: true});
-      this.set("numRows", "-", {silent: true});
-      this.set("numRowsAll", "-", {silent: true});
+      this.set("numRows", null, {silent: true});
+      this.set("numRowsAll", null, {silent: true});
       this.trigger("change");
     },
 
