@@ -389,8 +389,8 @@ var Jdbcwb = {};
 
         var pks = _.map(me.getPkDefs(), function(pkDef){
           return {
-            pname: pkDef.name
-            ,val: rowV.model.getCol(pkDef.no - 1)
+            pname: pkDef.name,
+            val: rowV.model.getCol(pkDef.no - 1)
           };
         });
 
