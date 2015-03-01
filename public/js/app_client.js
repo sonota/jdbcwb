@@ -31,13 +31,9 @@ var Jdbcwb = {};
 
   function isPrimaryKey(colDefs, ci){
     var cn = ci + 1;
-    var found = false;
-    colDefs.forEach(function(colDef, i){
-      if(colDef.no === cn && colDef.pk !== null){
-        found = true;
-      }
+    return _.some(colDefs, function(colDef, i){
+      return colDef.no === cn && colDef.pk !== null;
     });
-    return found;
   }
 
   function escapeForSql(val){
