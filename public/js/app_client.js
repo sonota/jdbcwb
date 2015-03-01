@@ -12,7 +12,15 @@ var Jdbcwb = {};
   var _g = Jdbcwb; // global namespace alias
 
   var COL_CONTENT_LENGTH_MAX = 32;
-
+  var SNIP_STR = "...";
+  var SNIP_MARKER = "__SNIP__";
+  var RE_WHITESPACE = new RegExp(
+    "["
+        + " "
+        + String.fromCharCode(160) // NBSP
+        + "]",
+    "g");
+  
   ////////////////////////////////
 
   function snipLongContent(str){
@@ -20,11 +28,10 @@ var Jdbcwb = {};
       return null;
     }
     if(str.length > COL_CONTENT_LENGTH_MAX){
-      var snip = "...";
-      var half = Math.floor((COL_CONTENT_LENGTH_MAX - snip.length) / 2);
+      var half = Math.floor((COL_CONTENT_LENGTH_MAX - SNIP_STR.length) / 2);
       var head = str.substring(0, half);
       var tail = str.substring(str.length - half, str.length);
-      str = head + '<span class="col_snip">' + snip + '</span>' + tail;
+      str = head + SNIP_MARKER + tail;
     }
     return str;
   }
@@ -84,6 +91,9 @@ var Jdbcwb = {};
         if(_g.appM.get("snipLongContent")){
           content = snipLongContent(col);
         }
+        content = content
+            .replace(RE_WHITESPACE, '<span class="col_space">&nbsp;</span>')
+            .replace(SNIP_MARKER, '<span class="col_snip">' + SNIP_STR + '</span>');
       }
       inner += '<td>' + content + '</td>';
     });
