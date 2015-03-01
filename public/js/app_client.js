@@ -335,8 +335,8 @@ var Jdbcwb = {};
         });
         me.rowVs.push(rowV);
 
-        me.listenTo(rowV, "click", function(rowV, evTarget){
-          me.onClickRow(rowV, evTarget);
+        me.listenTo(rowV, "dblclick", function(rowV, evTarget){
+          me.onDblclickRow(rowV, evTarget);
         });
         $tbody.append(rowV.render().el);
       });
@@ -356,7 +356,7 @@ var Jdbcwb = {};
       this._renderNormalView();
     },
 
-    onClickRow: function(rowV, evTarget){
+    onDblclickRow: function(rowV, evTarget){
       // TODO th case
       var $td = $(evTarget).closest("td");
       var ci = rowV.tdToCi($td.get(0));
@@ -456,8 +456,8 @@ var Jdbcwb = {};
     tagName: "tr",
 
     events: {
-      "click": function(ev){
-        this.trigger("click", this, ev.target);
+      "dblclick": function(ev){
+        this.trigger("dblclick", this, ev.target);
       }
     },
 
