@@ -426,14 +426,9 @@ var Jdbcwb = {};
     getColDefByIdx: function(ci){
       var me = this;
       var cn = ci + 1;
-      var def;
-      _.each(this.model.get("colDefs"), function(it){
-        if(it.no === cn){
-          def = it;
-          return false; // break
-        }
+      return _.find(this.model.get("colDefs"), function(it){
+        return it.no === cn;
       });
-      return def;
     },
 
     isPrimaryKey: function(ci){
