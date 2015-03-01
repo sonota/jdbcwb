@@ -2,8 +2,6 @@ var app = Kijitora.App.create(APP_ROOT);
 
 var FETCH_LIMIT = 100;
 
-var canScroll;
-
 ////////////////////////////////
 
 function join(xs, sep){
@@ -50,9 +48,9 @@ function getConnection(){
   var dbmd = GLOBAL.conn.getMetaData();
   putskv("JDBC major version", dbmd.getJDBCMajorVersion());
 
-  canScroll = dbmd.supportsResultSetType(
+  GLOBAL.canScroll = dbmd.supportsResultSetType(
     java.sql.ResultSet.TYPE_SCROLL_INSENSITIVE);
-  putskv("ResultSet.TYPE_SCROLL_INSENSITIVE", canScroll);
+  putskv("ResultSet.TYPE_SCROLL_INSENSITIVE", GLOBAL.canScroll);
 
   return GLOBAL.conn;
 }
@@ -214,7 +212,7 @@ app.get("/jdbcwb", function(req, res){
 
 function query(conn, sql, params){
   var stmt;
-  if(canScroll){
+  if(GLOBAL.canScroll){
     stmt = conn.createStatement(
       java.sql.ResultSet.TYPE_SCROLL_INSENSITIVE,
       java.sql.ResultSet.CONCUR_READ_ONLY
@@ -228,7 +226,7 @@ function query(conn, sql, params){
 
   // 全体（limitなし）の件数を取得
   var numRowsAll = null;
-  if(canScroll){
+  if(GLOBAL.canScroll){
     rs.last();
     numRowsAll = rs.getRow();
     rs.beforeFirst();
