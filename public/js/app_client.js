@@ -231,6 +231,8 @@ var Jdbcwb = {};
 
       Database.singleQuery('single_table', schema, tablePName, sql, function(result){
         // OK
+        resboxM.set("schema", schema, {silent: true});
+        resboxM.set("tablePName", tablePName, {silent: true});
         resboxM.setResult(result);
         fnOk();
       }, function(data){
@@ -374,7 +376,7 @@ var Jdbcwb = {};
       var me = this;
       _g.appV.guard();
 
-      var tablePName = $("#_table_edit [name=table_pname]").val(); // FIXME
+      var tablePName = _g.tableEditResultBoxM.get("tablePName");
 
       var pkDefs = _.filter(this.model.get("colDefs"), function(def){
         return def.pk != null;
@@ -433,7 +435,7 @@ var Jdbcwb = {};
           };
         });
 
-        var sql = "UPDATE " + $("#_table_edit [name=table_pname]").val() // FIXME should get from resbox model
+        var sql = "UPDATE " + _g.tableEditResultBoxM.get("tablePName")
               + "\n" + "SET " + pname + " = " + escapeForSql(postVal)
               + "\n" + "WHERE 1=1"
               + "\n";
