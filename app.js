@@ -284,8 +284,9 @@ app.post("/api/query", function(req, res){
 function update(params){
   var conn = getConnection();
 
-  var sql = params.sql;
-  var sqlParams = JSON.parse(params.params);
+  var _params = JSON.parse(params.json);
+  var sql = _params.sql;
+  var sqlParams = _params.params;
 
   var stmt = conn.prepareStatement(sql);
   _.each(sqlParams, function(sqlParam, i){

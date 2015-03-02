@@ -138,8 +138,10 @@ var Jdbcwb = {};
 
     update: function(sql, params, fnOk, fnNg){
       $.post("/api/update", {
-        sql: sql,
-        params: JSON.stringify(params)
+        json: JSON.stringify({
+          sql: sql,
+          params: params
+        })
       }, function(data){
         _g.appM.set("ajaxResponse", JSON.stringify(data));
 
