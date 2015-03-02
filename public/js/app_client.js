@@ -120,10 +120,12 @@ var Jdbcwb = {};
 
     multiQuery: function(mode, schema, tablePName, sqls, fnOk, fnNg){
       $.post("/api/query", {
-        mode: mode,
-        schema: schema,
-        table: tablePName,
-        sqls: JSON.stringify(sqls)
+        json: JSON.stringify({
+          mode: mode,
+          schema: schema,
+          table: tablePName,
+          sqls: sqls
+        })
       }).done(function(data){
         _g.appM.set("ajaxResponse", JSON.stringify(data));
 

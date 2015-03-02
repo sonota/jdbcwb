@@ -185,7 +185,8 @@ function _api(req, res, fn){
   res.setContentType("application/json");
   var data;
   try{
-    data = fn(req, res);
+    puts_debug(req.params.json);
+    data = fn(req, res, JSON.parse(req.params.json));
   } catch (ex) {
     dump(ex);
     data = {
@@ -262,14 +263,14 @@ function query(conn, sql, params){
 
 
 app.post("/api/query", function(req, res){
-  return _api(req, res, function(req, res){
+  return _api(req, res, function(req, res, params){
 
-    var sqls = JSON.parse(req.params.sqls);
+    var sqls = params.sqls;
 
     var conn = getConnection();
 
     var results = _.map(sqls, function(sql){
-      return query(conn, sql, req.params);
+      return query(conn, sql, params);
     });
 
     return {
@@ -284,9 +285,8 @@ app.post("/api/query", function(req, res){
 function update(params){
   var conn = getConnection();
 
-  var _params = JSON.parse(params.json);
-  var sql = _params.sql;
-  var sqlParams = _params.params;
+  var sql = params.sql;
+  var sqlParams = params.params;
 
   var stmt = conn.prepareStatement(sql);
   _.each(sqlParams, function(sqlParam, i){
@@ -308,9 +308,9 @@ function update(params){
 }
 
 app.post("/api/update", function(req, res){
-  return _api(req, res, function(req, res){
+  return _api(req, res, function(req, res, params){
 
-    return update(req.params);
+    return update(params);
   });
 });
 
