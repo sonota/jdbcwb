@@ -283,12 +283,17 @@ app.post("/api/query", function(req, res){
 
 function update(params){
   var conn = getConnection();
-  var stmt = conn.createStatement();
 
-  puts_debug(params.sql);
+  var sql = params.sql;
+  var sqlParams = JSON.parse(params.params);
+
+  var stmt = conn.prepareStatement(sql);
+  _.each(sqlParams, function(sqlParam, i){
+    stmt.setObject(i + 1, sqlParam);
+  });
 
   var execTime = new Date();
-  var count = stmt.executeUpdate("" + params.sql);
+  var count = stmt.executeUpdate();
 
   puts_debug("count=" + count);
 

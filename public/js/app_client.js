@@ -136,9 +136,10 @@ var Jdbcwb = {};
       });
     },
 
-    update: function(sql, fnOk, fnNg){
+    update: function(sql, params, fnOk, fnNg){
       $.post("/api/update", {
-        sql: sql
+        sql: sql,
+        params: JSON.stringify(params)
       }, function(data){
         _g.appM.set("ajaxResponse", JSON.stringify(data));
 
@@ -327,8 +328,8 @@ var Jdbcwb = {};
       this.trigger("change");
     },
 
-    doUpdate: function(sql, fnOk, fnNg){
-      Database.update(sql, fnOk, fnNg);
+    doUpdate: function(sql, params, fnOk, fnNg){
+      Database.update(sql, params, fnOk, fnNg);
     }
   });
 
@@ -409,14 +410,15 @@ var Jdbcwb = {};
         // TODO mv to model
         var sql = "DELETE FROM " + tablePName
               + "\n" + "WHERE 1=1";
+        var params = [];
         _.each(pkDefs, function(def, i){
           sql += "\n" + "  AND ";
-          sql += def.name + " = "
-              + escapeForSql(rowM.getCol(def.no - 1));
+          sql += def.name + " = ?";
+          params.push(rowM.getCol(def.no - 1));
         });
         // puts(sql);
 
-        rowM.doDelete(sql, function(){
+        rowM.doDelete(sql, params, function(){
           var newRowVs = _.filter(me.rowVs, function(rowV){
             return rowV.model !== rowM;
           });
@@ -455,18 +457,18 @@ var Jdbcwb = {};
         });
 
         var sql = "UPDATE " + _g.tableEditResultBoxM.get("tablePName")
-              + "\n" + "SET " + pname + " = " + escapeForSql(postVal)
+              + "\n" + "SET " + pname + " = ?"
               + "\n" + "WHERE 1=1"
               + "\n";
+        var params = [postVal];
 
         pks.forEach(function(pk, i){
-          sql += "  AND ";
-          sql += pk.pname
-              + " = " + escapeForSql(pk.val) + "\n";
+          sql += "  AND " + pk.pname + " = ?";
+          params.push(pk.val);
         });
-        // puts(sql);
+        // puts(sql, params);
 
-        me.model.doUpdate(sql, function(data){
+        me.model.doUpdate(sql, params, function(data){
           // OK
         }, function(data){
           // NG
@@ -516,9 +518,9 @@ var Jdbcwb = {};
       this.set("cols", cols);
     },
 
-    doDelete: function(sql, fnOk, fnNg){
+    doDelete: function(sql, params, fnOk, fnNg){
       var me = this;
-      Database.update(sql, function(){
+      Database.update(sql, params, function(){
         me.trigger("delete");
         fnOk();
       }, fnNg);
