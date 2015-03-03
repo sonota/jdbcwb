@@ -13,13 +13,12 @@ var Jdbcwb = {};
 
   var COL_CONTENT_LENGTH_MAX = 32;
   var SNIP_STR = "...";
-  var SNIP_MARKER = "__SNIP__";
   var RE_WHITESPACE = new RegExp(
     "["
         + " "
         + String.fromCharCode(160) // NBSP
-        + "]",
-    "g");
+        + "]"
+  );
   
   ////////////////////////////////
 
@@ -27,13 +26,17 @@ var Jdbcwb = {};
     if(str == null){
       return null;
     }
+    var ret = {};
     if(str.length > COL_CONTENT_LENGTH_MAX){
       var half = Math.floor((COL_CONTENT_LENGTH_MAX - SNIP_STR.length) / 2);
-      var head = str.substring(0, half);
-      var tail = str.substring(str.length - half, str.length);
-      str = head + SNIP_MARKER + tail;
+      ret.head = str.substring(0, half);
+      ret.tail = str.substring(str.length - half, str.length);
+      ret.snipped = true;
+    }else{
+      ret.str = str;
+      ret.snipped = false;
     }
-    return str;
+    return ret;
   }
 
   function isPrimaryKey(colDefs, ci){
@@ -83,6 +86,59 @@ var Jdbcwb = {};
     return '<tr>' + inner + '</tr>';
   }
 
+  var escapeMap = {
+    "\\": "\\",
+    "\r": "\\r",
+    "\n": "\\n",
+    "\t": "\\t"
+  };
+
+  function makeColContentHtml(val){
+    var temp = "" + val;
+    var tokens = [];
+    var buf = "";
+
+    while(temp.length > 0){
+      var ch0 = temp.charAt(0);
+      if( /\\|\r|\n|\t/.test(ch0) ){
+        if(buf.length > 0){
+          tokens.push({type: "plain", str: buf});
+          buf = "";
+        }
+        tokens.push({
+          type: "html",
+          str: htmlSpan(escapeMap[ch0], "col_ctrl_cd")
+        });
+      }else if( RE_WHITESPACE.test(ch0) ){
+        if(buf.length > 0){
+          tokens.push({type: "plain", str: buf});
+          buf = "";
+        }
+        tokens.push({
+          type: "html",
+          str: htmlSpan("&nbsp;", "col_space")
+        });
+      }else{
+        buf += ch0;
+      }
+      temp = temp.substring(1);
+    }
+    if(buf.length > 0){
+      tokens.push({type: "plain", str: buf});
+      buf = "";
+    }
+
+    var html = _.map(tokens, function(token){
+      if(token.type === 'html'){
+        return token.str;
+      }else{
+        return _.escape(token.str);
+      }
+    }).join("");
+
+    return html;
+  }
+
   function makeDataRows(row, ri){
     var inner = '<th>' + (ri + 1) + '</th>';
     _.each(row, function(col){
@@ -93,15 +149,17 @@ var Jdbcwb = {};
         content = htmlSpan("(blank)", "col_blank");
       }else{
         if(_g.appM.get("snipLongContent")){
-          content = snipLongContent(col);
+          var snipRetVal = snipLongContent(col);
+          if(snipRetVal.snipped){
+            content = makeColContentHtml(snipRetVal.head);
+            content += htmlSpan(SNIP_STR, "col_snip");
+            content += makeColContentHtml(snipRetVal.tail);
+          }else{
+            content = makeColContentHtml(col);
+          }
+        }else{
+          content = makeColContentHtml(col);
         }
-        content = content
-            .replace(RE_WHITESPACE, htmlSpan("&nbsp;", "col_space"))
-            .replace(/\\/g, htmlSpan("\\\\", "col_ctrl_cd"))
-            .replace(/\r/g, htmlSpan("\\r" , "col_ctrl_cd"))
-            .replace(/\n/g, htmlSpan("\\n" , "col_ctrl_cd"))
-            .replace(/\t/g, htmlSpan("\\t" , "col_ctrl_cd"))
-            .replace(SNIP_MARKER, htmlSpan(SNIP_STR, "col_snip"));
       }
       inner += '<td>' + content + '</td>';
     });
