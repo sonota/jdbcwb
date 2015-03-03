@@ -252,6 +252,23 @@ var Jdbcwb = {};
 
   _g.GenericOperationM = Backbone.Model.extend({
 
+    defaults: {
+      workText: ""
+    },
+
+    initialize: function(){
+      var workText = localStorage.getItem("generic_operation_work_text");
+      if(workText){ this.set("workText", workText); }
+
+      this.on("change workText", function(){
+        localStorage.setItem(
+          "generic_operation_work_text",
+          this.get("workText")
+        );
+        var workText = localStorage.getItem("generic_operation_work_text");
+      });
+    },
+
     doQuery: function(sql, fnOk, fnNg){
       var resboxM = _g.genericOperationResultBoxM;
       Database.singleQuery('generic', null, null, sql, function(result){
@@ -270,6 +287,21 @@ var Jdbcwb = {};
     events: {
       "click .btn_query": "doQuery",
       "click .btn_update": "doUpdate"
+    },
+
+    initialize: function(){
+      var me = this;
+
+      setInterval(function(){
+        me.model.set("workText", me.$("textarea").val());
+      }, 1000 * 60);
+
+      this.render();
+    },
+
+    render: function(){
+      this.$("textarea").val(this.model.get("workText"));
+      return this;
     },
 
     doQuery: function(){
