@@ -27,15 +27,9 @@ var Jdbcwb = {};
       return null;
     }
     var ret = {};
-    if(str.length > COL_CONTENT_LENGTH_MAX){
       var half = Math.floor((COL_CONTENT_LENGTH_MAX - SNIP_STR.length) / 2);
       ret.head = str.substring(0, half);
       ret.tail = str.substring(str.length - half, str.length);
-      ret.snipped = true;
-    }else{
-      ret.str = str;
-      ret.snipped = false;
-    }
     return ret;
   }
 
@@ -148,15 +142,13 @@ var Jdbcwb = {};
       }else if(col === ''){
         content = htmlSpan("(blank)", "col_blank");
       }else{
-        if(_g.appM.get("snipLongContent")){
-          var snipRetVal = snipLongContent(col);
-          if(snipRetVal.snipped){
+        if(_g.appM.get("snipLongContent")
+           && col.length > COL_CONTENT_LENGTH_MAX)
+        {
+            var snipRetVal = snipLongContent(col);
             content = makeColContentHtml(snipRetVal.head);
             content += htmlSpan(SNIP_STR, "col_snip");
             content += makeColContentHtml(snipRetVal.tail);
-          }else{
-            content = makeColContentHtml(col);
-          }
         }else{
           content = makeColContentHtml(col);
         }
