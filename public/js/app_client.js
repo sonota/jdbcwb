@@ -27,9 +27,9 @@ var Jdbcwb = {};
       return null;
     }
     var ret = {};
-      var half = Math.floor((COL_CONTENT_LENGTH_MAX - SNIP_STR.length) / 2);
-      ret.head = str.substring(0, half);
-      ret.tail = str.substring(str.length - half, str.length);
+    var half = Math.floor((COL_CONTENT_LENGTH_MAX - SNIP_STR.length) / 2);
+    ret.head = str.substring(0, half);
+    ret.tail = str.substring(str.length - half, str.length);
     return ret;
   }
 
@@ -145,10 +145,10 @@ var Jdbcwb = {};
         if(_g.appM.get("snipLongContent")
            && col.length > COL_CONTENT_LENGTH_MAX)
         {
-            var snipRetVal = snipLongContent(col);
-            content = makeColContentHtml(snipRetVal.head);
-            content += htmlSpan(SNIP_STR, "col_snip");
-            content += makeColContentHtml(snipRetVal.tail);
+          var snipRetVal = snipLongContent(col);
+          content = makeColContentHtml(snipRetVal.head);
+          content += htmlSpan(SNIP_STR, "col_snip");
+          content += makeColContentHtml(snipRetVal.tail);
         }else{
           content = makeColContentHtml(col);
         }
