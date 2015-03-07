@@ -67,6 +67,14 @@ var Jdbcwb = {};
     return '<span class="'+ className +'">' + content + '</span>';
   }
 
+  function list2tsv(xs){
+    return _.map(xs, function(x){
+      if(x == null) return '"(null)"';
+      if(x === "") return '"(blank)"';
+      return '"' + escapeBackslash(x) + '"';
+    }).join("\t");
+  }
+
   ////////////////////////////////
   // Table Utilities
 
@@ -217,22 +225,14 @@ var Jdbcwb = {};
       var header = "";
 
       // column number
-      header += _.map(colDefs, function(colDef){
-        return '"' + colDef.no + '"';
-      }).join("\t");
+      header += list2tsv(_.range(1, colDefs.length + 1));
 
       // column name
-      header += "\n" + _.map(colDefs, function(colDef){
-        return '"' + escapeBackslash(colDef.name) + '"';
-      }).join("\t");
+      header += "\n" + list2tsv(_.pluck(colDefs, "name"));
 
       // data
       var lines = _.map(rows, function(cols){
-        return _.map(cols, function(col){
-          if(col == null) return '"(null)"';
-          if(col === "") return '"(blank)"';
-          return '"' + escapeBackslash(col) + '"';
-        }).join("\t");
+        return list2tsv(cols);
       });
 
       return header + "\n" + lines.join("\n") + "\n";
