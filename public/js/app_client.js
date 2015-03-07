@@ -283,16 +283,18 @@ var Jdbcwb = {};
 
     initialize: function(){
       var me = this;
+      
+      this.editor = new Editor(this.$("._editor_box"));
 
       setInterval(function(){
-        me.model.set("workText", me.$("textarea").val());
+        me.model.set("workText", me.editor.val());
       }, 1000 * 60);
 
       this.render();
     },
 
     render: function(){
-      this.$("textarea").val(this.model.get("workText"));
+      this.editor.val(this.model.get("workText"));
       return this;
     },
 
@@ -302,7 +304,7 @@ var Jdbcwb = {};
       _g.appV.guard();
       resboxM.reset();
 
-      var sql = this.$("textarea").val();
+      var sql = this.editor.val();
 
       this.model.doQuery(sql, function(){
         _g.appV.unguard();
@@ -315,7 +317,7 @@ var Jdbcwb = {};
       var resboxM = _g.genericOperationResultBoxM;
       _g.appV.guard();
 
-      var sql = this.$("textarea").val();
+      var sql = this.editor.val();
 
       Database.update(sql, function(data){
         resboxM.set("numRows", data.count);
@@ -762,7 +764,6 @@ var Jdbcwb = {};
 
   _g.start = function(){
 
-    _g.genericOperationEditor = new Editor($("._editor_box"));
     _g.genericOperationResultBoxM = new _g.ResultBoxM();
     _g.genericOperationResultBoxV = new _g.ResultBoxV({
       el: $("#_generic_operation ._result_box"),
