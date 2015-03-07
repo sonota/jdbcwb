@@ -801,4 +801,6 @@ var Jdbcwb = {};
 
 ////////////////////////////////
 
-$(Jdbcwb.start); 
+$(function(){
+  Jdbcwb.start();
+});
