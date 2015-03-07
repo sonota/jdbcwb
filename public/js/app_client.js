@@ -304,7 +304,7 @@ var Jdbcwb = {};
       _g.appV.guard();
       resboxM.reset();
 
-      var sql = this.editor.val();
+      var sql = this.editor.getSql();
 
       this.model.doQuery(sql, function(){
         _g.appV.unguard();
@@ -317,7 +317,7 @@ var Jdbcwb = {};
       var resboxM = _g.genericOperationResultBoxM;
       _g.appV.guard();
 
-      var sql = this.editor.val();
+      var sql = this.editor.getSql();
 
       Database.update(sql, function(data){
         resboxM.set("numRows", data.count);
