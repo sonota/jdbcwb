@@ -353,7 +353,7 @@ var Jdbcwb = {};
 
       var sql = this.editor.getSql();
 
-      Database.update(sql, function(data){
+      Database.update(sql, [], function(data){
         resboxM.set("numRows", data.count);
         _g.appV.unguard();
       }, function(data){
