@@ -209,6 +209,40 @@ var Jdbcwb = {};
 
   ////////////////////////////////
 
+  var Converter = (function(){
+    var __ = {};
+
+    __.toTsv = function(rows, colDefs){
+
+      var header = "";
+
+      // column number
+      header += _.map(colDefs, function(colDef){
+        return '"' + colDef.no + '"';
+      }).join("\t");
+
+      // column name
+      header += "\n" + _.map(colDefs, function(colDef){
+        return '"' + escapeBackslash(colDef.name) + '"';
+      }).join("\t");
+
+      // data
+      var lines = _.map(rows, function(cols){
+        return _.map(cols, function(col){
+          if(col == null) return '"(null)"';
+          if(col === "") return '"(blank)"';
+          return '"' + escapeBackslash(col) + '"';
+        }).join("\t");
+      });
+
+      return header + "\n" + lines.join("\n") + "\n";
+    };
+
+    return __;
+  })();
+
+  ////////////////////////////////
+
   _g.AppM = Backbone.Model.extend({
     defaults: {
       ajaxResponse: "",
@@ -460,14 +494,22 @@ var Jdbcwb = {};
       // clear
       this.$(".result thead").empty();
       this.$(".result tbody").empty();
+      this.$(".tsv").val("");
 
       var numRows = this.model.get("numRows");
       var numRowsAll = this.model.get("numRowsAll");
       this.$(".num_rows").text(numRows != null ? numRows : "-");
       this.$(".num_rows_all").text(numRowsAll != null ? numRowsAll : "-");
 
+      // table
       this.rowVs = [];
       this._renderNormalView();
+
+      // TSV
+      this.$(".tsv").val(Converter.toTsv(
+        this.model.get("rows"),
+        this.model.get("colDefs")
+      ));
     },
 
     onDblclickRow: function(rowV, evTarget){
