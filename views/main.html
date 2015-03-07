@@ -41,6 +41,10 @@
                   0 0 3px rgba(255, 0, 0, 1.0);
     }
 
+    ._editor_box textarea {
+      width: 95%;
+      height: 200px;
+    }
 
     /**** State ****/
 
@@ -113,9 +117,7 @@
 <div id="_generic_operation">
   <h1>Generic Operation</h1>
 
-  <div id="_editor_generic">
-    <textarea style="width: 100%; height: 200px;"></textarea>
-  </div>
+  <div class="_editor_box"></div>
 
   <button class="btn_query">query</button>
   <button class="btn_update">update</button>

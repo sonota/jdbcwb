@@ -762,6 +762,7 @@ var Jdbcwb = {};
 
   _g.start = function(){
 
+    _g.genericOperationEditor = new Editor($("._editor_box"));
     _g.genericOperationResultBoxM = new _g.ResultBoxM();
     _g.genericOperationResultBoxV = new _g.ResultBoxV({
       el: $("#_generic_operation ._result_box"),
