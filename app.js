@@ -14,7 +14,7 @@ function getDriver(){
 
   var config = GLOBAL.config.db;
 
-  if(_.contains(["mysql"], config.type)){
+  if(_.contains(["mysql", "sqlite3"], config.type)){
     GLOBAL.driver = require(APP_ROOT + "/lib/drivers/" + config.type);
   }else{
     throw new Error("config.db.type is invalid (" + config.type + ")");
