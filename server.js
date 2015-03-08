@@ -74,6 +74,19 @@ function prettyDatetime(date){
     + "." + padRight(3, "0", date.getMilliseconds());
 }
 
+function join(xs, sep){
+  var s = "";
+  _.each(xs, function(x, i){
+    if(i >= 1){ s += sep; }
+    s += x;
+  });
+  return s;
+}
+
+function lines2text(){
+  return join(arguments, "\n") + "\n";
+}
+
 ////////////////////////////////
 
 /**
