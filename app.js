@@ -17,12 +17,78 @@ function lines2text(){
   return join(arguments, "\n") + "\n";
 }
 
-var getConnectionFuncs = {
-  mysql: function(url, props){
-    return new Packages.com.mysql.jdbc.Driver().connect(
-      url, props);
+////////////////////////////////
+
+var driverMap = {
+  "mysql": {
+    getConnection: function(url, props){
+      return new Packages.com.mysql.jdbc.Driver().connect(
+        url, props);
+    },
+
+    getColDefsForTable: function(conn, schema, table){
+      var template = lines2text(
+        "SELECT ORDINAL_POSITION, COLUMN_NAME, COLUMN_KEY, DATA_TYPE",
+        "FROM INFORMATION_SCHEMA.COLUMNS",
+        "WHERE 1=1",
+        "  AND TABLE_SCHEMA = '%s' ",
+        "  AND TABLE_NAME = '%s'   "
+      );
+      var sql = poorfmt(template, schema, table);
+      puts(sql);
+
+      var colDefs = [];
+
+      var stmt = conn.createStatement();
+      var rs = stmt.executeQuery(sql);
+      while(rs.next()){
+        var no = parseInt(rs.getString(1), 10);
+        var name = "" + rs.getString(2);
+
+        var keyseq;
+        if(rs.getObject(3) == null){
+          keyseq = null;
+        }else{
+          var s = "" + rs.getString(3);
+          keyseq = (s === "PRI") ? 1 : null;
+        }
+        var type = "" + rs.getString(4);
+
+        colDefs.push({
+          no: no, name: name, type: type, pk: keyseq
+        });
+      }
+
+      rs.close();
+      stmt.close();
+
+      if(colDefs.length === 0){
+        throw new Error("colDefs not found: schema (" + schema + ")");
+      }
+
+      return colDefs;
+    }
   }
 };
+
+/**
+ * Database Driver Factory
+ */
+function getDriver(){
+  if(GLOBAL.driver){
+    return GLOBAL.driver;
+  }
+
+  var config = GLOBAL.config.db;
+
+  if(config.type in driverMap){
+    GLOBAL.driver = driverMap[config.type];
+  }else{
+    throw new Error("config.db.type is invalid (" + config.type + ")");
+  }
+
+  return GLOBAL.driver;
+}
 
 function getConnection(){
   if( GLOBAL.conn && ! GLOBAL.conn.isClosed() ){
@@ -37,12 +103,7 @@ function getConnection(){
     _props.put(k, config.props[k]);
   }
 
-  if(config.type === "mysql"){
-    GLOBAL.conn = getConnectionFuncs[GLOBAL.config.db.type](
-      config.url, _props);
-  }else{
-    throw new Error("config.db.type is invalid (" + config.db.type + ")");
-  }
+  GLOBAL.conn = getDriver().getConnection(config.url, _props);
 
   // java.sql.DatabaseMetaData
   var dbmd = GLOBAL.conn.getMetaData();
@@ -71,61 +132,6 @@ function getMetaData(rs){
     });
   }
   return mds;
-}
-
-function getColDefsForTable_mysql(conn, schema, table){
-
-  var template = lines2text(
-    "SELECT ORDINAL_POSITION, COLUMN_NAME, COLUMN_KEY, DATA_TYPE",
-    "FROM INFORMATION_SCHEMA.COLUMNS",
-    "WHERE 1=1",
-    "  AND TABLE_SCHEMA = '%s' ",
-    "  AND TABLE_NAME = '%s'   "
-  );
-  var sql = poorfmt(template, schema, table);
-  puts(sql);
-
-  var colDefs = [];
-
-  var stmt = conn.createStatement();
-  var rs = stmt.executeQuery(sql);
-  while(rs.next()){
-    var no = parseInt(rs.getString(1), 10);
-    var name = "" + rs.getString(2);
-
-    var keyseq;
-    if(rs.getObject(3) == null){
-      keyseq = null;
-    }else{
-      var s = "" + rs.getString(3);
-      keyseq = (s === "PRI") ? 1 : null;
-    }
-    var type = "" + rs.getString(4);
-
-    colDefs.push({
-      no: no, name: name, type: type, pk: keyseq
-    });
-  }
-
-  rs.close();
-  stmt.close();
-
-  if(colDefs.length === 0){
-    throw new Error("colDefs not found: schema (" + schema + ")");
-  }
-
-  return colDefs;
-}
-
-function getColDefsForTable(conn, schema, table){
-  var dbType = GLOBAL.config.db.type;
-  switch(dbType){
-  case "mysql":
-    return getColDefsForTable_mysql(conn, schema, table);
-    break;
-  default:
-    throw new Error("unknown type (" + dbType + ")");
-  }
 }
 
 ////////////////////////////////
@@ -243,7 +249,7 @@ function query(conn, sql, params){
   puts_debug("mode=" + params.mode);
   var colDefs;
   if(params.mode === 'single_table'){
-    colDefs = getColDefsForTable(
+    colDefs = getDriver().getColDefsForTable(
       conn, params.schema, params.table);
   }else{
     colDefs = md;
