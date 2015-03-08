@@ -197,7 +197,7 @@ function query(conn, sql, params){
   puts_debug("mode=" + params.mode);
   var colDefs;
   if(params.mode === 'single_table'){
-    colDefs = getDriver().getColDefsForTable(
+    colDefs = getDriver().getColDefs(
       conn, params.schema, params.table);
   }else{
     colDefs = md;
