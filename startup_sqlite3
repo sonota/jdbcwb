@@ -1,0 +1,22 @@
+#!/bin/bash
+
+function get_app_root {
+    if [ -L $0 ] ; then
+        # symbolic link
+        dirname `readlink $0`
+    else
+        echo $(cd $(dirname $0); pwd)
+    fi
+    
+    return 0
+}
+
+declare APP_ROOT=$(get_app_root)
+echo $APP_ROOT
+cd $APP_ROOT
+
+CLASSPATH=${APP_ROOT}/drivers/sqlite-jdbc-3.8.6.jar
+echo CLASSPATH=$CLASSPATH
+
+jrunscript -classpath ${CLASSPATH} -encoding utf8 server.js \
+  --config config_sqlite3.json
