@@ -81,11 +81,15 @@ var Jdbcwb = {};
   function makeHeaderRows(
     // colPNames,
     colDefs){
-    var inner = "<th>#</th>";
+
+    var inner = "";
+
+    inner += '<tr><th>#</th>';
     _.each(colDefs, function(colDef){
       inner += '<th>' + colDef.name + '</th>';
     });
-    return '<tr>' + inner + '</tr>';
+    inner += '</tr>';
+    return inner;
   }
 
   var escapeMap = {
