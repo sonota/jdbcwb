@@ -84,6 +84,13 @@ var Jdbcwb = {};
 
     var inner = "";
 
+    // column number
+    inner += '<tr><th></th>';
+    inner += _.map(_.range(1, colDefs.length + 1), function(cn){
+      return '<th>' + cn + '</th>';
+    }).join('');
+    inner += '</tr>';
+
     inner += '<tr><th>#</th>';
     _.each(colDefs, function(colDef){
       inner += '<th>' + colDef.name + '</th>';
