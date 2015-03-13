@@ -90,6 +90,29 @@ var Jdbcwb = {};
     });
   }
 
+  function parseTimestamp(ts){
+    var time = parseInt(ts.split("_")[0]);
+    return new Date(time);
+  }
+
+  function padRight(width, pad, x){
+    var s = "" + x;
+    while(s.length < width){
+      s = pad + s;
+    }
+    return s;
+  }
+
+  function prettyDatetime(date){
+    if(date == null) return "";
+    return    padRight(4, "0", date.getFullYear())
+      + "-" + padRight(2, "0", date.getMonth() + 1)
+      + "-" + padRight(2, "0", date.getDate())
+      + "_" + padRight(2, "0", date.getHours())
+      + ":" + padRight(2, "0", date.getMinutes())
+      + ":" + padRight(2, "0", date.getSeconds())
+      + "." + padRight(3, "0", date.getMilliseconds());
+  }
 
   ////////////////////////////////
   // Table Utilities
@@ -475,7 +498,9 @@ var Jdbcwb = {};
         "colDefs": [],
         "rows": [],
         "numRows": null,
-        "numRowsAll": null
+        "numRowsAll": null,
+        "sql": null,
+        "timestamp": null
       });
     },
 
@@ -484,7 +509,9 @@ var Jdbcwb = {};
         "colDefs": result.colDefs,
         "rows": result.rows,
         "numRows": result.numRows,
-        "numRowsAll": result.numRowsAll
+        "numRowsAll": result.numRowsAll,
+        "sql": result.sql,
+        "timestamp": parseTimestamp(result.timestamp)
       });
     },
 
@@ -544,10 +571,17 @@ var Jdbcwb = {};
       this._renderNormalView();
 
       // TSV
-      this.$(".tsv").val(Converter.toTsv(
+      var tsv = "";
+      tsv += "--------\n";
+      tsv += prettyDatetime(this.model.get("timestamp")) + "\n";
+      tsv += this.model.get("sql") + "\n";
+      tsv += "--------\n";
+      tsv += Converter.toTsv(
         this.model.get("rows"),
         this.model.get("colDefs")
-      ));
+      );
+      tsv += "--------\n";
+      this.$(".tsv").val(tsv);
     },
 
     onDblclickRow: function(rowV, evTarget){
