@@ -471,12 +471,6 @@ var Jdbcwb = {};
     },
 
     reset: function(){
-      this.set("data", {
-        colDefs: [],
-        rows: [],
-        numRows: null,
-        numRowsAll: null
-      });
       this.set({
         "colDefs": [],
         "rows": [],
