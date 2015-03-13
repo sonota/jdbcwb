@@ -265,8 +265,12 @@ var Jdbcwb = {};
       // column number
       header += list2tsv(_.range(1, colDefs.length + 1));
 
-      // column name
-      header += "\n" + list2tsv(_.pluck(colDefs, "name"));
+      // column pname
+      var pnames = _.pluck(colDefs, "name");
+      header += "\n" + list2tsv(pnames);
+
+      // column lname
+      header += "\n" + list2tsv(toLNames(pnames));
 
       // data
       var lines = _.map(rows, function(cols){
