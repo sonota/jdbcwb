@@ -477,19 +477,21 @@ var Jdbcwb = {};
         numRows: null,
         numRowsAll: null
       });
-      this.set("colDefs", [], {silent: true});
-      this.set("rows", [], {silent: true});
-      this.set("numRows", null, {silent: true});
-      this.set("numRowsAll", null, {silent: true});
-      this.trigger("change");
+      this.set({
+        "colDefs": [],
+        "rows": [],
+        "numRows": null,
+        "numRowsAll": null
+      });
     },
 
     setResult: function(result){
-      this.set("colDefs", result.colDefs, {silent: true});
-      this.set("rows", result.rows, {silent: true});
-      this.set("numRows", result.numRows, {silent: true});
-      this.set("numRowsAll", result.numRowsAll, {silent: true});
-      this.trigger("change");
+      this.set({
+        "colDefs": result.colDefs,
+        "rows": result.rows,
+        "numRows": result.numRows,
+        "numRowsAll": result.numRowsAll
+      });
     },
 
     doUpdate: function(sql, params, fnOk, fnNg){
