@@ -11,6 +11,15 @@ var Jdbcwb = {};
 
   var _g = Jdbcwb; // global namespace alias
 
+  // sample data
+  var lnameMap = {
+    "id": "ID",
+    "name": "名前",
+    "url": "URL",
+    "created_at": "作成日時",
+    "updated_at": "更新日時"
+  };
+
   var COL_CONTENT_LENGTH_MAX = 32;
   var SNIP_STR = "...";
   var RE_WHITESPACE = new RegExp(
@@ -75,6 +84,13 @@ var Jdbcwb = {};
     }).join("\t");
   }
 
+  function toLNames(pnames){
+    return pnames.map(function(pname){
+      return lnameMap[pname.toLowerCase()] || "-";
+    });
+  }
+
+
   ////////////////////////////////
   // Table Utilities
 
@@ -91,11 +107,22 @@ var Jdbcwb = {};
     }).join('');
     inner += '</tr>';
 
-    inner += '<tr><th>#</th>';
+    // column pname
+    var pnames = _.pluck(colDefs, "name");
+    inner += '<tr><th></th>';
     _.each(colDefs, function(colDef){
       inner += '<th>' + colDef.name + '</th>';
     });
     inner += '</tr>';
+
+    // column lname
+    var lnames = toLNames(pnames);
+    inner += '<tr><th>#</th>';
+    _.each(lnames, function(lname){
+      inner += '<th>' + lname + '</th>';
+    });
+    inner += '</tr>';
+
     return inner;
   }
 
