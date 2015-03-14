@@ -309,12 +309,13 @@ var Jdbcwb = {};
 
       _.each(colDefs, function(colDef){
         var ri = colDef.no - 1;
-        if( ! lines[ri] ){ lines[ri] = ''; }
-        lines[ri] += colDef.no;
-        lines[ri] += "\t" + colDef.name;
+        var cols = [];
+        cols.push(colDef.no);
+        cols.push(colDef.name);
         for(var i=0; i<numRows; i++){
-          lines[ri] += "\t" + rows[i][ri];
+          cols.push(rows[i][ri]);
         }
+        lines[ri] = list2tsv(cols);
       });
       
       return lines.join("\n") + "\n";
