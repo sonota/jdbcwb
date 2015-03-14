@@ -241,6 +241,33 @@ var Jdbcwb = {};
     return inner;
   }
 
+  function makeElHtml(tag, content, attrs){
+    var $el = $('<' + tag + '></' + tag + '>')
+        .text(content);
+    if(attrs){
+      $el.attr(attrs);
+    }
+    return $('<div></div>').append($el).html();
+  }
+
+  function makeTxHtml(col){
+    var type = col.type;
+
+    if(type === "th" || type === "td"){
+      return makeElHtml(col.type, col.v, col.attrs);
+    }else if(type === "null"){
+      return makeDataCol(null);
+    }else if(type === "data"){
+      return makeDataCol(col.v);
+    }else{
+      throw new Error("must not happen");
+    }
+  }
+
+  function makeTrHtml(cols, i){
+    return '<tr>' + _.map(cols, makeTxHtml).join("") + '</tr>';
+  }
+
   ////////////////////////////////
 
   var Database = {
@@ -606,32 +633,43 @@ var Jdbcwb = {};
     },
 
     _renderTransposedView: function(){
-      var $tbody = this.$(".result tbody");
-      var trInners = [];
+      var colDefs = this.model.get("colDefs");
+      var pnames = _.pluck(colDefs, "name");
+      var lnames = toLNames(pnames);
+      var numRows = this.model.get("rows").length;
+      var numCols = colDefs.length;
+      var rows = [];
 
       // row number
-      // TODO
+      var row0 = [
+        { type: "th", v: "#", attrs: {colspan: 3} }
+      ];
+      _.each(_.range(1, numRows + 1), function(rowNo){
+        row0.push({ type: "th", v: "" + rowNo });
+      });
+      rows[0] = row0;
 
-      // columns
-      var colDefs = this.model.get("colDefs");
-      var rows = this.model.get("rows");
-      var numRows = rows.length;
+      // data
+      for(var ci=0; ci<numCols; ci++){
+        rows[1 + ci] = [
+          { type: "th", v: "" + (ci + 1) },
+          { type: "th", v: pnames[ci] },
+          { type: "th", v: lnames[ci] }
+        ];
+      }
 
-      _.each(colDefs, function(colDef){
-        var ri = colDef.no - 1;
-        if( ! trInners[ri] ){ trInners[ri] = ''; }
-        trInners[ri] += '<th>' + colDef.no + '</th>';
-        trInners[ri] += '<th>' + colDef.name + '</th>';
-        for(var i=0; i<numRows; i++){
-          trInners[ri] += '<td>' + rows[i][ri] + '</td>';
+      _.each(this.model.get("rows"), function(row, ri){
+        var col, value;
+        for(var ci=0; ci<numCols; ci++){
+          col = row[ci];
+          value = (col === null) ? null : "" + col;
+          rows[1 + ci].push({ type: "data", v: value });
         }
       });
-      
-      var tbody = _.map(trInners, function(tr){
-        return '<tr>' + tr + '</tr>';
-      }).join("");
 
-      $tbody.html(tbody);
+      var $tbody = this.$(".result tbody");
+      var html = _.map(rows, makeTrHtml).join("\n");
+      $tbody.html(html);
     },
 
     render: function(){
