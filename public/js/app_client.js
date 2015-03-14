@@ -212,27 +212,31 @@ var Jdbcwb = {};
     return html;
   }
 
+  function makeDataCol(col){
+    var content;
+    if(col == null){
+      content = htmlSpan("(null)", "col_null");
+    }else if(col === ''){
+      content = htmlSpan("(blank)", "col_blank");
+    }else{
+      if(_g.appM.get("snipLongContent")
+         && col.length > COL_CONTENT_LENGTH_MAX)
+      {
+        var snipRetVal = snipLongContent(col);
+        content = makeColContentHtml(snipRetVal.head);
+        content += htmlSpan(SNIP_STR, "col_snip");
+        content += makeColContentHtml(snipRetVal.tail);
+      }else{
+        content = makeColContentHtml(col);
+      }
+    }
+    return '<td>' + content + '</td>';
+  }
+
   function makeDataRows(row, ri){
     var inner = '<th>' + (ri + 1) + '</th>';
     _.each(row, function(col){
-      var content;
-      if(col == null){
-        content = htmlSpan("(null)", "col_null");
-      }else if(col === ''){
-        content = htmlSpan("(blank)", "col_blank");
-      }else{
-        if(_g.appM.get("snipLongContent")
-           && col.length > COL_CONTENT_LENGTH_MAX)
-        {
-          var snipRetVal = snipLongContent(col);
-          content = makeColContentHtml(snipRetVal.head);
-          content += htmlSpan(SNIP_STR, "col_snip");
-          content += makeColContentHtml(snipRetVal.tail);
-        }else{
-          content = makeColContentHtml(col);
-        }
-      }
-      inner += '<td>' + content + '</td>';
+      inner += makeDataCol(col);
     });
     return inner;
   }
