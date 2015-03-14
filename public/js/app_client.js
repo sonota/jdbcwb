@@ -566,9 +566,32 @@ var Jdbcwb = {};
     },
 
     _renderTransposedView: function(){
-      puts("_renderTransposedView");
       var $tbody = this.$(".result tbody");
-      $tbody.append('<tr><td>{transposed table}</td></tr>');
+      var trInners = [];
+
+      // row number
+      // TODO
+
+      // columns
+      var colDefs = this.model.get("colDefs");
+      var rows = this.model.get("rows");
+      var numRows = rows.length;
+
+      _.each(colDefs, function(colDef){
+        var ri = colDef.no - 1;
+        if( ! trInners[ri] ){ trInners[ri] = ''; }
+        trInners[ri] += '<th>' + colDef.no + '</th>';
+        trInners[ri] += '<th>' + colDef.name + '</th>';
+        for(var i=0; i<numRows; i++){
+          trInners[ri] += '<td>' + rows[i][ri] + '</td>';
+        }
+      });
+      
+      var tbody = _.map(trInners, function(tr){
+        return '<tr>' + tr + '</tr>';
+      }).join("");
+
+      $tbody.html(tbody);
     },
 
     render: function(){
