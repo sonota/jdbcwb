@@ -114,6 +114,16 @@ var Jdbcwb = {};
       + "." + padRight(3, "0", date.getMilliseconds());
   }
 
+  function ex2msg(ex){
+    var msg = "";
+    msg += "" + ex.fileName;
+    msg += " " + ex.lineNumber;
+    msg += "\n" + ex.name;
+    msg += "\n" + ex.message;
+    return msg;
+  }
+
+
   ////////////////////////////////
   // Table Utilities
 
@@ -353,6 +363,13 @@ var Jdbcwb = {};
           .prop("checked", this.model.get("snipLongContent"));
     },
 
+    showMsg: function(msg){
+      this.$("#messages pre").text(msg).show(100);
+    },
+    hideMsg: function(){
+      this.$("#messages pre").hide();
+    },
+
     guard:   function(){ this.$("#guard_layer").show(); },
     unguard: function(){ this.$("#guard_layer").hide(); }
   });
@@ -384,7 +401,7 @@ var Jdbcwb = {};
         resboxM.setResult(result);
         fnOk();
       }, function(data){
-        fnNg();
+        fnNg(data);
       });
     }
   });
@@ -419,13 +436,15 @@ var Jdbcwb = {};
       var resboxM = _g.genericOperationResultBoxM;
 
       _g.appV.guard();
+      _g.appV.hideMsg();
       resboxM.reset();
 
       var sql = this.editor.getSql();
 
       this.model.doQuery(sql, function(){
         _g.appV.unguard();
-      }, function(){
+      }, function(data){
+        _g.appV.showMsg(ex2msg(data.ex));
         _g.appV.unguard();
       });
     },
@@ -433,6 +452,7 @@ var Jdbcwb = {};
     doUpdate: function(){
       var resboxM = _g.genericOperationResultBoxM;
       _g.appV.guard();
+      _g.appV.hideMsg();
 
       var sql = this.editor.getSql();
 
@@ -440,6 +460,7 @@ var Jdbcwb = {};
         resboxM.set("numRows", data.count);
         _g.appV.unguard();
       }, function(data){
+        _g.appV.showMsg(ex2msg(data.ex));
         _g.appV.unguard();
       });
     }
@@ -461,7 +482,7 @@ var Jdbcwb = {};
         fnOk();
       }, function(data){
         // NG
-        fnNg();
+        fnNg(data);
       });
     },
 
@@ -486,7 +507,7 @@ var Jdbcwb = {};
       var resboxM = _g.tableEditResultBoxM;
 
       _g.appV.guard();
-      // _g.appV.hideMsg(); // TODO
+      _g.appV.hideMsg();
       resboxM.reset();
       this.colDefs = null;
 
@@ -495,7 +516,8 @@ var Jdbcwb = {};
 
       this.model.doQuery(schema, tablePName, function(){
         _g.appV.unguard();
-      }, function(){
+      }, function(data){
+        _g.appV.showMsg(ex2msg(data.ex));
         _g.appV.unguard();
       });
     }

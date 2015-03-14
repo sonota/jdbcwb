@@ -46,6 +46,13 @@
       height: 200px;
     }
 
+    #messages pre {
+      border: solid 2px #e00;
+      background: #ff8;
+      display: none;
+      padding: 0.2rem;
+    }
+
     /**** State ****/
 
     tr.selected    { background: #fea; }
@@ -113,6 +120,10 @@
   <input type="checkbox" class="snip_long_content" checked />
   snip long content
 </label>
+
+<div id="messages">
+  <pre></pre>
+</div>
 
 <div id="_generic_operation">
   <h1>Generic Operation</h1>
