@@ -303,6 +303,10 @@ var Jdbcwb = {};
       return header + "\n" + lines.join("\n") + "\n";
     };
 
+    __.toTransposedTsv = function(rows, colDefs){
+      return "{transposed tsv}";
+    };
+
     return __;
   })();
 
@@ -490,7 +494,8 @@ var Jdbcwb = {};
       numRows: null,
       numRowsAll: null,
       rows: [],
-      colDefs: []
+      colDefs: [],
+      transposed: false
     },
 
     reset: function(){
@@ -523,12 +528,17 @@ var Jdbcwb = {};
   _g.ResultBoxV = Backbone.View.extend({
 
     events: {
-      "click .btn_delete": "onClickDelete"
+      "click .btn_delete": "onClickDelete",
+      "change .transposed": "onChangeTransposed"
     },
 
     initialize: function(){
       this.rowVs = [];
       this.listenTo(this.model, "change", this.render);
+    },
+
+    onChangeTransposed: function(){
+      this.model.set("transposed", this.$(".transposed").prop("checked"));
     },
 
     _renderNormalView: function(){
@@ -555,6 +565,12 @@ var Jdbcwb = {};
       });
     },
 
+    _renderTransposedView: function(){
+      puts("_renderTransposedView");
+      var $tbody = this.$(".result tbody");
+      $tbody.append('<tr><td>{transposed table}</td></tr>');
+    },
+
     render: function(){
       // clear
       this.$(".result thead").empty();
@@ -568,7 +584,11 @@ var Jdbcwb = {};
 
       // table
       this.rowVs = [];
-      this._renderNormalView();
+      if(this.model.get("transposed")){
+        this._renderTransposedView();
+      }else{
+        this._renderNormalView();
+      }
 
       // TSV
       var tsv = "";
@@ -576,10 +596,17 @@ var Jdbcwb = {};
       tsv += prettyDatetime(this.model.get("timestamp")) + "\n";
       tsv += this.model.get("sql") + "\n";
       tsv += "--------\n";
-      tsv += Converter.toTsv(
-        this.model.get("rows"),
-        this.model.get("colDefs")
-      );
+      if(this.model.get("transposed")){
+        tsv += Converter.toTransposedTsv(
+          this.model.get("rows"),
+          this.model.get("colDefs")
+        );
+      }else{
+        tsv += Converter.toTsv(
+          this.model.get("rows"),
+          this.model.get("colDefs")
+        );
+      }
       tsv += "--------\n";
       this.$(".tsv").val(tsv);
     },
