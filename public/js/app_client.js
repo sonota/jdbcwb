@@ -304,7 +304,20 @@ var Jdbcwb = {};
     };
 
     __.toTransposedTsv = function(rows, colDefs){
-      return "{transposed tsv}";
+      var numRows = rows.length;
+      var lines = [];
+
+      _.each(colDefs, function(colDef){
+        var ri = colDef.no - 1;
+        if( ! lines[ri] ){ lines[ri] = ''; }
+        lines[ri] += colDef.no;
+        lines[ri] += "\t" + colDef.name;
+        for(var i=0; i<numRows; i++){
+          lines[ri] += "\t" + rows[i][ri];
+        }
+      });
+      
+      return lines.join("\n") + "\n";
     };
 
     return __;
