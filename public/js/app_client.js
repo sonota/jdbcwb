@@ -91,7 +91,7 @@ var Jdbcwb = {};
   }
 
   function parseTimestamp(ts){
-    var time = parseInt(ts.split("_")[0]);
+    var time = parseInt(ts.split("_")[0], 10);
     return new Date(time);
   }
 
