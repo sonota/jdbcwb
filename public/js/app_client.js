@@ -12,7 +12,7 @@ var Jdbcwb = {};
   var _g = Jdbcwb; // global namespace alias
 
   // sample data
-  var lnameMap = {
+  const lnameMap = {
     "id": "ID",
     "name": "名前",
     "url": "URL",
@@ -20,9 +20,9 @@ var Jdbcwb = {};
     "updated_at": "更新日時"
   };
 
-  var COL_CONTENT_LENGTH_MAX = 32;
-  var SNIP_STR = "...";
-  var RE_WHITESPACE = new RegExp(
+  const COL_CONTENT_LENGTH_MAX = 32;
+  const SNIP_STR = "...";
+  const RE_WHITESPACE = new RegExp(
     "["
         + " "
         + String.fromCharCode(160) // NBSP
@@ -159,7 +159,7 @@ var Jdbcwb = {};
     return inner;
   }
 
-  var escapeMap = {
+  const escapeMap = {
     "\\": "\\\\",
     "\r": "\\r",
     "\n": "\\n",
