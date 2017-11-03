@@ -120,6 +120,10 @@ function getView(name){
   return _File.read(path);
 }
 
+function redirectHtml(path){
+  return '<script> location.href = "' + path + '"; </script>';
+}
+
 function _api(req, res, fn){
   res.setContentType("application/json");
   var data;
@@ -143,6 +147,10 @@ function _api(req, res, fn){
 }
 
 ////////////////////////////////
+
+app.get("/", function(req, res){
+  res.send(redirectHtml("/jdbcwb"));
+});
 
 app.get("/jdbcwb", function(req, res){
   res.send(getView("main"));
