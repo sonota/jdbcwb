@@ -11,6 +11,7 @@ function get_app_root {
     return 0
 }
 
+declare JAVA_HOME=/path/to/java_home
 declare APP_ROOT=$(get_app_root)
 echo $APP_ROOT
 cd $APP_ROOT
@@ -18,5 +19,5 @@ cd $APP_ROOT
 CLASSPATH=${APP_ROOT}/drivers/mysql-connector-java-5.1.33.jar
 echo CLASSPATH=$CLASSPATH
 
-jrunscript -classpath ${CLASSPATH} -encoding utf8 server.js \
+${JAVA_HOME}/bin/jrunscript -classpath ${CLASSPATH} -encoding utf8 server.js \
   --config config_mysql.json
