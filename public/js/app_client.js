@@ -353,7 +353,7 @@ var Jdbcwb = {};
         var cols = [];
         cols.push(colDef.no);
         cols.push(colDef.name);
-        for(var i=0; i<numRows; i++){
+        for(let i=0; i<numRows; i++){
           cols.push(rows[i][ri]);
         }
         lines[ri] = list2tsv(cols);
@@ -650,7 +650,7 @@ var Jdbcwb = {};
       rows[0] = row0;
 
       // data
-      for(var ci=0; ci<numCols; ci++){
+      for(let ci=0; ci<numCols; ci++){
         rows[1 + ci] = [
           { type: "th", v: "" + (ci + 1) },
           { type: "th", v: pnames[ci] },
@@ -660,7 +660,7 @@ var Jdbcwb = {};
 
       _.each(this.model.get("rows"), function(row, ri){
         var col, value;
-        for(var ci=0; ci<numCols; ci++){
+        for(let ci=0; ci<numCols; ci++){
           col = row[ci];
           value = (col === null) ? null : "" + col;
           rows[1 + ci].push({ type: "data", v: value });
